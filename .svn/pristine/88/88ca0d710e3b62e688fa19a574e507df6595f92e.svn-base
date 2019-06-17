@@ -1,0 +1,42 @@
+
+<view class='verify-page'>
+    <view class='verify-logo'>
+        <image src="../../images/logo.png" mode='aspectFill'></image>
+        <view class='logo_tit'>金鼎管家中心</view>
+    </view>
+    <view class='tips'>为了保护账户安全，请先验证手机号</view>
+    <view class='content'>
+    <view class='list'>
+          <view class='txt'>国家</view>
+             <picker bindchange="mycity" value="{{city}}" range="{{cityLists}}">
+              <view class="picker">
+                {{cityLists[city]}}
+              </view>
+            </picker>
+            <view class='list-msg2'>
+                <image src="../../images/prev.png" background-size="contain"></image>  
+            </view>
+        </view>
+        <view class='list'>
+            <view class='txt'>手机号</view>
+            <view class='phone'>
+                <input placeholder='输入手机号码' type='number' bindinput="phoneInpFn" value="{{phoneVal}}" minlength="11" maxlength='11' placeholder-class='input-place'></input>
+            </view>
+        </view>
+        <view class='list'>
+            <view class='txt'>验证码</view>
+            <view class='code-input'>
+                <input placeholder-class='input-place' type='number' value="{{codeVal}}" bindinput="codeInpFn" minlength="4" maxlength='4' placeholder='输入验证码'></input>
+            </view>
+            <view class='code-btn' wx:if='{{ count_time >= 60 }}' bindtap='starCount'>获取验证码</view>
+            <view class='code-btn' wx:else>倒计时{{ count_time }}s</view>
+        </view>
+         
+        <!-- <view class='register' bindtap="register">立即注册</view> -->
+        <view class='btn' catchtap='finishVerifyFn'>完成</view>
+    </view>
+     <view class='rangeBox'>
+         <view class='staff_login' bindtap="bangding">员工登录</view>
+        <view class='register' bindtap="register">立即注册</view>
+    </view>
+</view>

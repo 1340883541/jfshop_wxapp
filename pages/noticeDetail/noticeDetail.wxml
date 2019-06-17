@@ -1,0 +1,57 @@
+<import src="../../wxParse/wxParse.wxml"/>
+
+<view class="w-wrap {{isHidden==1?'cur':''}}">
+    <view class='notice_topbox'>
+        <view class='notice-detail-title'>{{ info.title }}</view>
+        <view class='share_switch clearfix' bindtap='switchShare'>
+            <image src='../../images/share_icon.png'></image>
+            <text class='fenxiang'>分享</text>
+        </view>
+        <!-- <text bindtap='switchShare'> 分享</text> -->
+    </view>
+    <view class='info_body'>
+        <template is="wxParse" data="{{wxParseData: about.nodes}}" />
+        <!-- <view class='notice-detail-info'>
+            <view class='notice-detail-cap'>对于吃货而言，秋冬季节不吃海鲜，就仿佛错过了一个世纪。</view>
+            <view class='notice-detail-img'>
+                <image src='../../images/noticelist_pic.png' mode="aspectFill"></image>
+            </view>
+            <view class='notice-detail-txt' wx-html='{{ info.content }}'></view>
+        </view> -->
+    </view>
+</view>
+
+<view class='share_selectbody' wx:if="{{isShare}}" bindtap='closeShare'>
+    <view class='share_select' animation="{{animation}}">
+        <view class='share_selectop clearfix'>
+            <button class='share_iconbox' open-type="share">
+                <image src='../../images/icon-fx-weixin.png'></image>
+                <text class='share_text'>分享给好友</text>
+            </button>
+            <view class='share_iconbox' bindtap='shareFrenq'>
+                <image src='../../images/icon-fx-pyq.png'></image>
+                <text class='share_text'>生成朋友圈分享图</text>
+            </view>
+        </view>
+        <view class='share_selecbot' bindtap='closeShare'>取消</view>
+    </view>
+</view>
+
+<view class='canvas_body' wx:if="{{isCode}}">
+    <view class='canvas_box'>
+        <view class='can_top'>
+            <text>生成海报</text>
+            <image bindtap='closeCanva' src='../../images/close_canvas.png'></image>
+        </view>
+        <view class='can_center'>
+            <view class='can_cbox'>
+                <image class='can_c' src='{{imageSp}}'></image>
+            </view>
+        </view>
+        <view class='saveimg'>
+            <button bindtap='savePoster'>保存到相册</button>
+            <text>保存图片到相册，你可以分享啦</text>
+        </view>
+    </view>
+</view>
+

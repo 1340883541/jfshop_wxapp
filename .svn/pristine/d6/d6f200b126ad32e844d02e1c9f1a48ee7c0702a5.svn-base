@@ -1,0 +1,30 @@
+/* components/Search/search.wxss */
+
+.search-float {
+    width: 450rpx;
+    height: 48rpx;
+    margin: auto;
+}
+
+.search-top {
+    width:100%;
+    height: 100%;
+    display: flex;
+    display: -webkit-flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 36rpx;
+}
+
+.search-icon {
+    margin-right: 16rpx;
+    width: 24rpx;
+    height: 24rpx;
+}
+
+.search-text {
+    font-size: 24rpx;
+    color: #000;
+}
+

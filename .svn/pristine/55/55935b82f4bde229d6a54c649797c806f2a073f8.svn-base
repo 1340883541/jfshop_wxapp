@@ -1,0 +1,21 @@
+<!--pages/asset/asset.wxml-->
+<view class='container'>
+    <scroll-view scroll-top="{{ scrollTop }}" style="height:{{height}}px" bindscrolltolower="lower" scroll-y="true">
+        <view class='asset_body' id='asset_body'>
+            <view class='asset_li' catchtap='opendetail' wx:for="{{assetList}}" id='{{ item.id }}' wx:key='{{ item.id }}'>
+                <view class='asset_time'><text>{{item.c_time}}</text></view>
+                <view class='asset_info'>
+                    <view class='asset_tit elli-2'>{{item.loup}} {{item.room_no}}</view>
+                    <view class='asset_jindu clearfix'><text class='asset_jinduBtn'>查询进度>></text></view>
+                    <view class='asset_xiaoquFmian'><image src='{{item.img}}'></image></view>
+                </view>
+            </view> 
+              
+        </view>
+
+       <view class='z-no-more'>{{ page < totalPage ? '加载更多' : '没有更多' }}</view>  
+        
+        <!-- 空数据 -->
+        <empty is-empty-show='{{ assetList.length == 0 }}' empty-txt='我的房屋数据'></empty>
+    </scroll-view>
+</view>

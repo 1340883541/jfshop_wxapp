@@ -1,0 +1,7 @@
+<!-- empty page components  -->
+<view class='empty-box' wx:if="{{isEmptyShow}}">
+    <view class='empty-img' style="margin-top:{{marginTop}}rpx">
+        <image src="../../images/kong.png" mode='aspectFit' lazy-load='true'></image>
+    </view>
+    <view class='empty-txt'>{{emptyTxt}}</view>
+</view>

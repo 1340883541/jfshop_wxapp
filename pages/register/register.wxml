@@ -1,0 +1,67 @@
+<!-- 注册页面 -->
+<view class='verify-page'>
+    <view class='verify-logo'>
+        <image src="../../images/logo.png" mode='aspectFill'></image>
+        <view class='logo_tit'>金鼎管家中心</view>
+    </view>
+    <view class='tips'>为了保护账户安全，请先验证手机号</view>
+    <view class='content'>
+        <view class='list'>
+          <view class='txt'>服务归属</view>
+            <!-- <view class='list-msg2' bindtap='bindShowMsg'>
+                <text>{{selLists[index]}}</text>
+                <image src="../../images/prev.png" background-size="contain"></image> 
+            </view> -->
+            <!-- <view class='attribution select_box' wx:if="{{select}}"  >
+                <view wx:for="{{selLists}}" wx:key="this" class="select_one" catchtap="mySelect" data-index="{{index}}">{{item.name}}                      </view>
+            </view> -->
+            <view class="flex_info">
+             <picker bindchange="mySelect" value="{{index}}" range="{{selLists}}">
+              <view class="picker">
+                {{selLists[index]}}
+              </view>
+            </picker>
+             <view class='list-msg2'>
+                <image src="../../images/prev.png" background-size="contain"></image>  
+            </view>
+            </view>
+        </view>
+        <view class="list">
+            <view class='txt'>姓名</view>
+             <view class='name'>
+                <input placeholder='请输入姓名' type='text' bindinput="nameInpFn" value="{{nameVal}}" minlength="2" maxlength='11'                         placeholder-class='input-place'></input>
+            </view>
+        </view>
+        <view class='list'>
+          <view class='txt'>国家</view>
+             <picker bindchange="mycity" value="{{city}}" range="{{cityLists}}">
+              <view class="picker">
+                {{cityLists[city]}}
+              </view>
+            </picker>
+            <view class='list-msg2'>
+                <image src="../../images/prev.png" background-size="contain"></image>  
+            </view>
+        </view>
+
+        <view class='list'>
+            <view class='txt'>手机号</view> 
+            <view class='phone'>
+                <input placeholder='输入手机号码' type='number' bindinput="phoneInpFn" value="{{phoneVal}}" minlength="11" maxlength='11' placeholder-class='input-place'></input>
+            </view>
+             <view class='code-btn' wx:if='{{ count_time >= 60 }}' bindtap='starCount'>获取验证码</view>
+             <view class='code-btn' wx:else>倒计时{{ count_time }}s</view>
+        </view>
+        <view class='list'>
+            <view class='txt'>验证码</view>
+            <view class='code-input'>
+                <input placeholder-class='input-place' type='number' value="{{codeVal}}" bindinput="codeInpFn" minlength="4" maxlength='4' placeholder='输入验证码'></input>
+            </view>
+        </view>
+         <view class="list">
+            <view class='txt'>推荐人</view>
+            <view class='echoName'>{{supercust||"无"}}</view>
+        </view>
+        <view class='btn' catchtap='finishVerifyFn'>注册</view>
+    </view>
+</view>

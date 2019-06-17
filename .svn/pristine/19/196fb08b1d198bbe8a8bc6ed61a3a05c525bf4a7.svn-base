@@ -1,0 +1,7 @@
+{
+    "navigationBarBackgroundColor": "#000",
+    "navigationBarTitleText": "填写订单",
+    "usingComponents": {
+        "pay-popup":"../../components/PayPopup/PayPopup"
+    }
+}

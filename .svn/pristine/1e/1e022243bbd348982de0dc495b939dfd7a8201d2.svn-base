@@ -1,0 +1,68 @@
+<view class="w-wrap">
+    <view class='jif-top'>
+        <view class='curr-jif'>剩余积分(分)</view>
+        <!-- <view class="recharge_flex"> -->
+          <view class='jif-num'>{{integral}}</view>
+          <view class='jif-recharge' type="primary" bindtap="modalinput">立即充值</view>
+        <!-- </view> -->
+    </view>
+    <view class='p-public-bottom'>
+        <view class="detailed_flex">
+          <!-- <view class='p-public-mx'>积分明细</view>
+          <view class='p-public-mx'>充值明细</view> -->
+          <view class="{{selected?'red':'p-public-mx'}}" bindtap="selected">消费明细</view>
+          <view class="{{selected1?'red ':'p-public-mx'}}" bindtap="selected1">充值明细</view>
+        </view>
+        <!-- 积分列表 -->
+         <view class="{{selected?'show':'hidden'}}">
+            <block wx:if="{{isLoadSuc}}">
+                <view class='p-public-lists' wx:if="{{integralLists && integralLists.length > 0}}">
+                    <view class='p-public-list bor-1px-b' wx:for="{{integralLists}}" wx:key="{{item.id}}">
+                        <view class='p-public-list-top clear'>
+                            <view class='fl'>{{item.change_desc}}</view>
+                            <view class='fr'>{{item.money_type}}{{item.money}}</view>
+                        </view>
+                        <view class='p-public-list-bottom clear'>
+                            <view class='fl' wx:if="{{item.type == 1}}">订单号：{{item.order_sn}}</view>
+                            <view class='fr'>{{item.create_time}}</view>
+                        </view>
+                    </view>
+                </view>
+                <empty isEmptyShow="{{true}}" emptyTxt="{{emptyTxt}}" marginTop="160" wx:else></empty>
+            </block>
+        </view>
+        <view class="{{selected1?'show':'hidden'}}" >
+         <block wx:if="{{isLoadSuc}}">
+                <view class='p-public-lists' wx:if="{{moneyLists && moneyLists.length > 0}}">
+                    <view class='p-public-list bor-1px-b' wx:for="{{moneyLists}}" wx:key="{{item.id}}">
+                        <view class='p-public-list-top clear'>
+                            <view class='fl'>{{item.type_title}}</view>
+                            <view class='fr'>{{item.money}}</view>
+                        </view>
+                        <view class='p-public-list-bottom clear'>
+                            <view class='fl'>{{item.create_time}}</view>
+                        </view>
+                    </view>
+                </view>
+                <empty isEmptyShow="{{true}}" emptyTxt="{{emptyTxt}}" marginTop="160" wx:else></empty>
+            </block>
+        </view>
+    </view>
+    <!-- 弹出框 -->
+    <modal hidden="{{hiddenmodalput}}"  class="modelHidden" cancel-text="取消" confirm-text="充值" bindconfirm="confirm" bindcancel="cancel" >  
+        <view class='cz_zhezhao' wx:if="{{ischongz_zhezhao}}"></view>
+       <view class='list'>
+            <view class='txt'>充值积分：</view>
+            <view class='integral_info'>
+                <input type='number' placeholder='请输入' bindinput="interInpFn" value="{{integralA}}" minlength="2"                                           maxlength='11' placeholder-class='input-place'></input>
+            </view>   
+        </view>
+         <view class='list'>
+            <view class='txt'>应付金额：</view>
+            <view class='integral_info'>
+                <input type='number' disabled bindinput="moneyInpFn" value="{{moneyA}}" minlength=""                                                          maxlength='11'></input>
+            </view>
+            
+        </view>
+    </modal>  
+</view>

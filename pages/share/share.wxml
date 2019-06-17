@@ -1,0 +1,25 @@
+<view class="w-wrap">
+    <view class='share_Qr'>
+       <image src="{{imgURl}}" catchtap='previewImg'></image>
+    </view>
+     <view class='p-public-mx'  bindtap='down_file'>下载分享二维码</view>
+    <view class='p-public-bottom'>
+        <view class="my_customer">我的分享客户</view>
+        <!-- 客户列表 -->
+        <block wx:if="{{isLoadSuc}}">
+            <view class='p-public-lists'  wx:if="{{customerLists && customerLists.length > 0}}">
+                <view class='p-public-list bor-1px-b' wx:for="{{customerLists}}" wx:key="{{item.id}}">
+                    <view class='p-public-list-top clear'>
+                        <view class='fl'>{{item.username}}</view>
+                        <view class='fr'>手机号：{{item.phone}}</view>
+                    </view>
+                    <view class='p-public-list-bottom clear'>
+                        <view class='fl'>服务公司：{{item.name}}</view>
+                        <view class='fr'>注册时间：{{item.c_time}}</view>
+                    </view>
+                </view>
+            </view>
+            <empty isEmptyShow="{{true}}" emptyTxt="{{emptyTxt}}" marginTop="150" wx:else></empty>
+        </block>
+    </view>
+</view>

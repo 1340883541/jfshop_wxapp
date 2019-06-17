@@ -1,0 +1,94 @@
+<view class="w-wrap" wx:if="{{isLoadSuc}}" bindtap='leftCancel'>
+    <form bindsubmit="submit" report-submit='true'>
+    <!-- 购物车为空 -->
+    <view class='cart-empty' wx:if="{{!allLists || !allLists.length}}">
+        <view class='cart-empty-img'>
+            <image src="../../images/kong.png" mode='aspectFit' lazy-load='true'></image>
+        </view>
+        <view class='cart-empty-txt'>购物车空空如也~</view>
+        <view class='goto' bindtap='skipIndex'>去逛逛吧</view>
+    </view>
+    <!-- 购物车列表 -->
+    <view class='cart-lists' wx:if="{{allLists && allLists.length}}" >
+        <block wx:for="{{allLists}}" wx:for-index="idx" wx:for-item="list" wx:key="list.id">
+            <view class='cart-list bor-1px-b {{leftLists[idx]?"touchmove":""}}'  data-idx="{{idx}}" data-ids="{{list.id}}" data-goodid="{{list.goods_id}}" data-stock="{{list.stock}}" data-sale="{{list.is_sale}}" data-nostock="{{list.no_stock}}"   bindtouchstart='touchstartFn' bindtouchend='touchendFn'>
+                <view class='cart-left-icon floatL' catchtap='selectedFn' data-idx="{{idx}}">
+                    <image src='../../images/cart_i0.png' mode='aspectFill' wx:if="{{!currLists[idx]}}"></image>
+                    <image src='../../images/cart_i1.png' mode='aspectFill' wx:else></image>
+                </view>
+                <view class='cart-left-img floatL placeholder-icon' data-idx="{{idx}}" data-ids="{{list.id}}" data-goodid="{{list.goods_id}}" data-stock="{{list.stock}}" data-sale="{{list.is_sale}}" data-nostock="{{list.no_stock}}" bindtap='skipGoodsDetail'>
+                    <view class='img-cover'>
+                        <image mode='aspectFill' wx:if="{{list.stock == 0 || list.is_sale == 2 || list.no_stock == 2}}" src='../../images/kusale.png'></image>
+                    </view>
+                    <image src='{{list.goods_img}}' mode='aspectFill' lazy-load='true'></image>
+                </view>
+                <view class='cart-right-info floatL '>
+                    <view class='cart-r-title elli-2'><text data-idx="{{idx}}" data-ids="{{list.id}}" data-goodid="{{list.goods_id}}" data-stock="{{list.stock}}" data-sale="{{list.is_sale}}" data-nostock="{{list.no_stock}}" bindtap='skipGoodsDetail'>{{list.name}}</text></view>
+                    <view class='cart-r-desc elli'><text data-idx="{{idx}}" data-ids="{{list.id}}" data-goodid="{{list.goods_id}}" data-stock="{{list.stock}}" data-sale="{{list.is_sale}}" data-nostock="{{list.no_stock}}" bindtap='skipGoodsDetail'>{{list.sku_val_str}}</text></view>
+                    <view class='cart-r-price'>
+                        <text wx:if="{{list.price_dis!=0}}"  data-idx="{{idx}}" data-ids="{{list.id}}" data-goodid="{{list.goods_id}}" data-stock="{{list.stock}}" data-sale="{{list.is_sale}}" data-nostock="{{list.no_stock}}" bindtap='skipGoodsDetail'>{{list.price_dis}} 积分</text>
+                        <text wx:if="{{list.price_dis==0}}"  data-idx="{{idx}}" data-ids="{{list.id}}" data-goodid="{{list.goods_id}}" data-stock="{{list.stock}}" data-sale="{{list.is_sale}}" data-nostock="{{list.no_stock}}" bindtap='skipGoodsDetail'>免费</text>
+                        <text class='jifen_y' wx:if="{{list.price_y != list.price_dis}}"  data-idx="{{idx}}" data-ids="{{list.id}}" data-goodid="{{list.goods_id}}" data-stock="{{list.stock}}" data-sale="{{list.is_sale}}" data-nostock="{{list.no_stock}}" bindtap='skipGoodsDetail'>{{list.price_y}} 积分</text>
+                    </view>
+                </view>
+                <view class='cart-number bor-1px'>
+                    <view class='cart-num-reduce floatL bor-1px-r' catchtap='numReduce' data-idx="{{idx}}">
+                        <view class='inner {{numberLists[idx] <= 1 ? "disable" : ""}}'></view>
+                    </view>
+                    <!-- <view class='cart-num floatL bor-1px-r' catchtap="munCart">
+                        {{numberLists[idx]}}
+                    </view> -->
+                    <input class='cart-num floatL bor-1px-r' type='number' value='{{ numberLists[idx] }}' bindblur="oNumberFunc"  data-idx="{{idx}}">
+                    </input>
+                    <view class='cart-num-add floatL' catchtap='numAdd' data-idx="{{idx}}">
+                        <view class='inner {{numberLists[idx] >= list.stock ? "disable" : ""}}'></view>
+                    </view>
+                    <view style='clear:both;'></view>
+                </view>
+                <view class='cart-delete' catchtouchend='deleteCartFn' catchtouchstart='deleteStart' data-ids="{{list.id}}" data-idx="{{idx}}">删除</view>
+                <view class='cover-bg' wx:if="{{list.stock == 0 || list.is_sale == 2 || list.no_stock == 2}}"></view>
+            </view> 
+        </block>
+    </view>
+    <view class='cart-foot-info' wx:if="{{allLists && allLists.length}}">
+        <view class='fl clear'>
+            <view class='all-select fl left' catchtap='allSelectFn'>
+                <image src='../../images/cart_i0.png' mode="aspectFit" wx:if="{{!isAllSelect}}"></image>
+                <image src='../../images/cart_i1.png' mode="aspectFit" wx:else></image>
+                全选
+            </view>
+            <!-- <view class='all-delete fl left' > -->
+            <view class='all-delete fl left' hidden='{{!isShowDelete}}' catchtap='deleteCartMore'>
+                <image src='../../images/delete_icon.png' mode="aspectFit"></image>
+                移除
+            </view> 
+        </view>
+        <view class='fr clear'>
+            <view class='totle-price fl'>
+                <!-- 合计：<text>{{totalPrice}}积分</text>  -->
+                 <!-- 活动优惠：<text>{{alltotalPrice - totalPrice}}积分</text>          -->
+                <view>合计：<text>{{totalPrice}} 积分</text></view>
+                <view class='youhui_jifen' wx:if="{{alltotalPrice - totalPrice != 0}}">活动优惠：<text>{{alltotalPrice - totalPrice}} 积分</text>  </view>
+                 
+                 
+            </view>
+            <!-- <view class='totle-price fl'>
+                活动优惠：<text>600 积分</text>
+            </view> -->
+            <button class='jies-btn fl' form-type="submit" catchtap='skipJieFn'>立即结算</button>
+            <button class='jies-btn fl jies-zhenzhao' wx:if="{{isjies_zhenzhao}}"></button>
+        </view>
+    </view>
+    </form>
+</view>
+<!-- 未授权box -->
+<view class='not-login-box' wx-if="{{!isGetInfo}}">
+    <view class='n-logo-box'>
+        <image src="../../images/logo.png" mode='aspectFit'></image>
+    </view>
+    <view class='n-login-btn'>
+        <button open-type='getUserInfo' hover-class='none' bindgetuserinfo='getUserInfo'>微信用户一键获取授权</button>
+    </view>
+</view>
+<!-- toast组件 -->
+<toast isShowToast="{{isShowToast}}" errTxt="{{toastTxt}}" relative="center"></toast>

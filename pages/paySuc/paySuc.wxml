@@ -1,0 +1,9 @@
+<view>
+    <view class='pay-suc'>
+        <image src="../../images/pay_suc.png" mode='aspectFill'></image>
+    </view>
+    <view class='pay-suc-txt'>支付成功 <text>{{money}}积分</text></view>
+    <view class='pay-suc-btn' catchtap='finishBtn'>
+        完成
+    </view>
+</view>

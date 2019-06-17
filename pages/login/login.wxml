@@ -1,0 +1,27 @@
+
+<view class='verify-page'>
+    <view class='verify-logo'>
+        <image src="../../images/logo.png" mode='aspectFill'></image>
+        <view class='logo_tit'>金鼎管家中心</view>
+    </view>
+    <view class='tips'>为了保护账户安全，请先验证账号</view>
+    <view class='content'>
+        <view class='list'>
+            <view class='txt'>账号</view>
+            <view class='phone'>
+                <input placeholder='输入账号' type='text' bindinput="phoneInpFn" value="{{accountVal}}"  maxlength='20' placeholder-class='input-place'></input>
+            </view>
+        </view>
+        <view class='list'>
+            <view class='txt'>密码</view>
+            <view class='code-input'>
+                <input placeholder-class='input-place' type='password' value="{{passVal}}" bindinput="codeInpFn" maxlength='20' placeholder='密码'></input>
+            </view>
+        </view>
+        <view class='btn' catchtap='finishVerifyFn'>完成</view>
+    </view>
+    <view class='rangeBox'>
+         <view class='staff_login' bindtap="bangding">客户登录</view>
+        <view class='register' bindtap="register">立即注册</view>
+    </view>
+</view>

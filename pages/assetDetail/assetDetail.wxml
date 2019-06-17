@@ -1,0 +1,33 @@
+<!--pages/assetdetail/assetdetail.wxml-->
+<import src="../../wxParse/wxParse.wxml"/>
+<view class='container'>
+    <view class='assetdetail_body'>
+        <view class='assetdetail_tit'>{{info.loup}}  {{info.room_no}}</view>
+        <view class='assetdetail_info'>
+            <view class='assetdetail_img'><image src='{{info.img}}'></image></view>
+            <view class='assetdetail_tro'>
+                <view class='assetdetail_p'><text class='font_w'>地址：</text>{{info.address}}</view>
+                <view class='assetdetail_p'><text class='font_w'>房型：</text>{{info.room_type}}</view>
+                <view class='assetdetail_p'><text class='font_w'>房号：</text>{{info.room_no}}</view>
+                <view class='assetdetail_p'><text class='font_w'>面积：</text>{{info.home_area}}</view>
+                <view class='assetdetail_p'><text class='font_w'>交房时间：</text>{{info.get_time}}</view>
+                <view class='assetdetail_p'><text class='font_w'>成交价：</text>{{info.money}}</view>
+                <view class='assetdetail_p'><text class='font_w'>项目亮点：</text>
+                    <template is="wxParse" data="{{wxParseData: content.nodes}}" />
+                </view>
+
+                <!-- <view><text class='font_w'>我的房型：</text></view> -->
+                <view><image class='jindu' src='../../images/gongc_jindu.jpg'></image></view>
+
+                <view wx:for="{{info.record_list}}">
+                    <view class='asset_time'><text>{{item.flow_time}}</text></view>
+                    <view class='remark_msg'>{{item.remark}}</view>
+                    <image class='record_img' wx:for="{{item.img_all}}" src='{{item}}'></image>
+                </view>
+
+                <view class='jiaofang_time'>预计交房时间：{{info.get_time}}</view>
+
+            </view>
+        </view>
+    </view>
+</view>

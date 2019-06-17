@@ -1,0 +1,69 @@
+<view class="w-wrap">
+    <!-- 订单状态 -->
+    <view class='top-status-box'>
+        <!-- 已取消 -->
+        <view class='top-status top-status0' wx:if='{{ dataJ.new_status == 0 }}'>
+            <image class='fl' src='../../images/order_state_icon0.png'></image>已取消
+        </view>
+        <!-- 待支付 -->
+        <view class='top-status' wx:if='{{ dataJ.new_status == 1 }}'>
+            <image class='fl' src='../../images/order_state_icon1.png'></image>待支付
+        </view>
+        <!-- 已完成 -->
+        <view class='top-status' wx:if='{{ dataJ.new_status == 2 }}'>
+            <image class='fl' src='../../images/order_state_icon2.png'></image>已完成
+        </view>
+    </view>
+    <view class='order-place'></view>
+    <!-- 订单商品 -->
+    <view class='order-goods-lists'>
+        <view class='order-goods-list bor-1px-b' wx:for='{{ dataJ.goods }}' wx:key='{{ item.goods_id }}' bindtap='goDetail' data-delete='{{ item.is_delete }}' data-id='{{ item.goods_id }}'>
+            <view class='order-goods-img fl'>
+                <image src='{{ item.pic }}' class='placeholder-icon'  mode='aspectFill' lazy-load></image>
+            </view>
+            <view class='order-goods-info fl'>
+                <view class='order-goods-title elli-2'>{{ item.goods_name }}</view>
+                <view class='order-goods-desc'><text class='fl elli'>{{ item.goods_sku }}</text><text class='fr order-goods-num'>x{{ item.num }}</text></view>
+                <view class='order-goods-price'>{{ item.unit_price }}积分</view>
+            </view>
+            <view class='w-clear-box'></view>
+            <view class='order-goods-pop' wx:if='{{ item.is_sale == 2 || item.is_delete == 2 }}' >
+                <image src='../../images/shixiao.png'></image>
+            </view>
+        </view>
+
+    </view>
+    <view class='order-place'></view>
+    <!-- 订单编号 -->
+    <view class='order-number'>
+        <view>订单编号：{{ dataJ.order_sn }}<text class='copy' catchtap='clipTxtFn' data-sn='{{ dataJ.order_sn }}'>复制</text></view>
+        <view wx:if="{{ dataJ.remark }}">备注信息：{{ dataJ.remark }}</view>
+        <view>下单时间：{{ dataJ.create_time }}</view>
+        <view wx:if="{{dataJ.new_status == 2}}">支付时间：{{ dataJ.pay_time }}</view>
+    </view>
+    
+    <view class='order-total-price'>
+        实付积分:<text>{{ dataJ.order_price }}积分</text>
+    </view>
+
+    <!-- 底部按钮 -->
+    <view class='foot-box bor-1px-t'>
+        <!-- 待支付 -->
+        <view class='foot-status-box' wx:if='{{ dataJ.new_status == 1 }}'>
+            <view class='fr right'>
+                <view class='foot-state0 foot-state fl' bindtap='celNdel' data-type='1' data-id='{{ dataJ.id }}'>取消订单</view>
+                <view class='foot-state1 foot-state margin-l-16 fl' bindtap='gotoPay'>支付</view>
+            </view>
+        </view>
+        <!-- 已完成 && 已取消 -->
+        <view class='foot-status-box' wx:if='{{ dataJ.new_status == 0  || dataJ.new_status == 2 }}'>
+            <view class='fl left' bindtap='celNdel' data-type='2' data-id='{{ dataJ.id }}'>删除订单</view>
+            <view class='fr right'>
+                <view class='foot-state0 foot-state fl' bindtap='orderMore' data-id='{{ dataJ.id }}'>再来一单</view>
+            </view>
+        </view>
+    </view>
+    <!-- 支付弹框组件 -->
+    <pay-popup is-show-pay="{{isShowPay}}" pay-integral="{{payMoney}}" user-integral="{{userIntegral || 0}}" is-use-integral="{{isUseIntegral}}" bindhide="hidePayFn"  bindpaysuc="paySucFn"></pay-popup>
+</view>
+

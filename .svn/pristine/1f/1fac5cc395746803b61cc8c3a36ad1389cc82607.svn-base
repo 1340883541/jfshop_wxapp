@@ -1,0 +1,56 @@
+import ajax from '../../utils/request.js';
+import WxParse from '../../wxParse/wxParse.js';
+const Nav = require('../../utils/navigate.js');
+let app = getApp();
+
+Page({
+
+  /**
+   * 页面的初始数据
+   */
+  data: {
+      actId:1, //活动id
+      actInfo:{}, //活动内容
+  },
+
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+      this.setData({
+          actId: options.id
+      })
+      this.getActInfo();
+  },
+    //后台获取活动推荐 
+    getActInfo() {
+        // console.log(this.data.actId)
+        var _this = this;
+        wx.showLoading({
+            title: '加载中',
+            mask: true
+        })
+        ajax.ajaxFunc({
+            url: 'api/Activity/info',
+            data: {
+                openid: app.globalData.openId || wx.getStorageSync('openid'),
+                id:_this.data.actId
+            },
+            success: function (r) {
+                // console.log(JSON.stringify(r))
+                if (r.code == 1) {
+                    _this.setData({
+                        actInfo: r.data
+                    })
+                    WxParse.wxParse('about', 'html', _this.data.actInfo.content, _this, 0);
+                    //修改页面标题
+                    wx.setNavigationBarTitle({
+                        title: r.data.title
+                    });
+                }
+                wx.hideLoading();
+            }
+        })
+
+    }
+})

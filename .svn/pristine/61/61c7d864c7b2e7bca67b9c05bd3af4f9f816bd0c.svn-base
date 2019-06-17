@@ -1,0 +1,9 @@
+<!--components/Search/search.wxml-->
+<view class='search-float'>
+    <view class='search-top'>
+        <image class='search-icon' src="{{iconUrl}}" catchtap='onTap'></image>
+        <text class='search-text' style="color:{{textColor}}">{{text}}</text>
+        <slot></slot>
+    </view>
+    
+</view>

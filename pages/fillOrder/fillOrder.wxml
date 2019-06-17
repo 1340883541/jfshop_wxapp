@@ -1,0 +1,253 @@
+<view class="w-wrap">
+    <!-- 商品信息,订单留言 -->
+    <form bindsubmit="formSubmit">
+    <view class='order-goods'>
+        <!-- 多件商品的显示 2件商品-->
+        <!-- <view class='order-goods-info bor-1px-b' catchtap='skipInventoryFn' wx:if="{{goods &&  goods.length == 2}}">
+            <view class='fl order-goods-img'>
+                <swiper display-multiple-items="{{goods.length >= '3' ? '3' : goods.length}}" style="width:350rpx;">
+                    <block wx:for="{{goods}}" wx:key="{{item.id}}">
+                        <swiper-item>
+                            <image src='{{item.goods_img}}' class='placeholder-icon' mode='aspectFill' lazy-load='true'></image>
+                        </swiper-item>
+                    </block> 
+                </swiper>
+            </view>
+            <view class='fr clear'>
+                <view class='fl order-goods-num'>共{{goods.length}}件</view>
+                <icon class='fl right-icon1'></icon>
+            </view>
+            <view style='clear:both;'></view>
+        </view>  -->
+        <!-- 多件商品的显示 超过2件商品-->
+        <!-- <view class='order-goods-info bor-1px-b' catchtap='skipInventoryFn' wx:if="{{goods &&  goods.length> 2}}">
+            <view class='fl order-goods-img'>
+                <swiper display-multiple-items="{{goods.length >= '3' ? '3' : goods.length}}">
+                    <block wx:for="{{goods}}" wx:key="{{item.id}}">
+                        <swiper-item>
+                            <image src='{{item.goods_img}}' class='placeholder-icon'  mode='aspectFill' lazy-load='true'></image>
+                        </swiper-item>
+                    </block> 
+                </swiper>
+            </view>
+            <view class='fr clear'>
+                <view class='fl order-goods-num'>共{{goods.length}}件</view>
+                <icon class='fl right-icon1'></icon>
+            </view>
+            <view style='clear:both;'></view>
+        </view>  -->
+        <!-- 选中商品的显示 -->
+        <block wx:for="{{goods}}" wx:key="{{item.id}}">
+            <view class='goods-info bor-1px-b clearfix'>
+                <view class='clearfix'>
+                    <view class='goods-left-img floatL'>
+                        <image src='{{item.goods_img}}' class='placeholder-icon' mode='aspectFill' lazy-load='true'></image>
+                    </view>
+                    <view class='goods-right-info floatL'>
+                        <view class='goods-r-title elli-2'>{{item.name}}</view>
+                        <view class='goods-r-desc elli'>{{item.sku_val_str}}</view>
+                        <view class='goods-r-price'>{{item.price_dis}} 积分</view>
+                        <!-- <view class='goods-r-price' wx:if="{{item.price_dis != 0}}">{{item.price_dis}} 积分</view>
+                        <view class='goods-r-price' wx:if="{{item.price_dis == 0 && item.is_temp == 2}}">免费</view>
+                        <view class='goods-r-price' wx:if="{{item.price_dis == 0 && item.is_temp == 1}}">免费预约</view> -->
+                        
+                        <view class='goods-number'>x{{item.goods_number}}</view>
+                    </view>
+                </view>
+                
+                <!-- 订单服务填写 -->
+                <view class='oder-temp' wx:if="{{is_server == 1}}">
+                    <view class='oder-temp-tit' wx:if="{{item.temp_conf.length > 0}}">预约信息填写</view>
+                    <block wx:if="{{item.temp_conf.length > 0}}" wx:for="{{item.temp_conf}}" wx:for-index="tempIndex" wx:for-item="tempItem" wx:key="{{tempItem.id}}">
+                        <view class='oder-temp-box'>
+                            <label class='floatL label-info'><text class="mustCls" wx:if="{{tempItem.is_must == 1}}">*</text>{{tempItem.view_field}} :</label>
+                            
+                            <!-- 日期选择type == 5 -->
+                            <input wx:if="{{tempItem.type == 5}}" disabled name="{{item.goods_id+'__'+item.goods_sub_id+'__'+item.temp_id+'__'+tempItem.view_field+'__'+tempItem.is_must}}" class="floatL input-info" data-index="{{index}}" data-tIndex="{{tempIndex}}" data-dayNum="{{tempItem.option_value[0]}}" bindtap='chooseSezi' placeholder="yyyy-MM-dd" value='{{tempItem.date}}'>
+                            </input>
+
+                            <!-- 日期时间选择type == 6 -->
+                            <input wx:if="{{tempItem.type == 6}}" disabled name="{{item.goods_id+'__'+item.goods_sub_id+'__'+item.temp_id+'__'+tempItem.view_field+'__'+tempItem.is_must}}" class="floatL input-info" data-index="{{index}}" data-tIndex="{{tempIndex}}" data-dayNum="{{tempItem.option_value[0]}}" bindtap='chooseSezi2' placeholder="yyyy-MM-dd HH:mm:ss" value='{{tempItem.dateall}}'>
+                            </input>
+                            <!-- 时间选择type == 7 -->
+                            <input wx:if="{{tempItem.type == 7}}" disabled name="{{item.goods_id+'__'+item.goods_sub_id+'__'+item.temp_id+'__'+tempItem.view_field+'__'+tempItem.is_must}}" class="floatL input-info" data-index="{{index}}" data-tIndex="{{tempIndex}}" bindtap='chooseSezi3' placeholder="HH:mm:ss" value='{{tempItem.time}}'>
+                            </input>
+
+                            <!-- 文本框type == 1 -->
+                            <input wx:if="{{tempItem.type == 1}}" name="{{item.goods_id+'__'+item.goods_sub_id+'__'+item.temp_id+'__'+tempItem.view_field+'__'+tempItem.is_must}}" class='floatL input-info' type='text' data-index="{{index}}" data-goodid="{{item.goods_id}}" data-goodsubid="{{item.goods_sub_id}}"  data-tempid="{{item.temp_id}}" data-viewfield="{{tempItem.view_field}}" bindblur="bindInputFunc"></input>
+                            <!-- 单选type == 2 -->
+                            <view wx:if="{{tempItem.type == 2}}" class="floatL input-info">
+                                <picker bindchange="bindPickerChange" data-index="{{index}}" data-tIndex="{{tempIndex}}" value="{{tempItem.idx}}" range="{{tempItem.option_value}}">
+                                    <input class="picker" disabled data-index="{{tempItem.option_value}}"  name="{{item.goods_id+'__'+item.goods_sub_id+'__'+item.temp_id+'__'+tempItem.view_field+'__'+tempItem.is_must}}" value='{{tempItem.option_value[tempItem.idx]}}'>
+                                        
+                                    </input>
+                                </picker>
+                            </view>
+                            <!-- 多选 type == 3 -->
+                            <checkbox-group wx:if="{{tempItem.type == 3}}" class="floatL input-info chegroup" name="{{item.goods_id+'__'+item.goods_sub_id+'__'+item.temp_id+'__'+tempItem.view_field+'__'+tempItem.is_must}}" data-index="{{index}}" data-tIndex="{{tempIndex}}" data-goodid="{{item.goods_id}}" data-goodsubid="{{item.goods_sub_id}}"  bindchange="checkboxChange">
+                                <label class="checkbox" wx:for="{{tempItem.option_value}}">
+                                    <checkbox value="{{item}}"/>
+                                    {{item}}
+                                </label>
+                            </checkbox-group>
+                            <!-- 文本域type == 4 -->
+                            <view class='floatL textareabox ' wx:if="{{tempItem.type == 4}}">
+                                <textarea wx:if="{{isShowTxtarea}}" class="textarea-info" name="{{item.goods_id+'__'+item.goods_sub_id+'__'+item.temp_id+'__'+tempItem.view_field+'__'+tempItem.is_must}}" placeholder="请输入,100字以内" data-index="{{index}}" data-tIndex="{{tempIndex}}" value='{{tempItem.t_tareaVal}}' maxlength='100' auto-height='true' data-goodid="{{item.goods_id}}" data-goodsubid="{{item.goods_sub_id}}" bindblur="bindTextateaFunc"
+                            />
+                                <text wx:if="{{!isShowTxtarea}}">{{tempItem.t_tareaVal}}</text>
+                            </view>
+                            <!-- 图片上传type == 8 -->
+                            <view class='floatL input-info input-imgup clearfix' wx:if="{{tempItem.type == 8}}">
+                                <div class="imgup-box clearfix" wx:for="{{tempItem.t_imgs}}" wx:for-index="imgIndex" wx:for-item="imgItem" wx:key="{{imgItem}}" data-Imgidx="{{imgIndex}}" data-index="{{index}}" data-tIndex="{{tempIndex}}" data-uploadsrc="{{imgItem.uploadsrc}}" catchtap="delUpImgFunc">
+                                    <image class='imgup-show' mode="aspectFill" src='{{imgItem.showsrc}}'></image>
+                                    <i class="upimg-del"></i>
+                                </div>
+                                <input class="imgup-input {{tempItem.option_value[0] > tempItem.t_imgs.length ? '':'w-height0'}}" type='button' disabled name="{{item.goods_id+'__'+item.goods_sub_id+'__'+item.temp_id+'__'+tempItem.view_field+'__'+tempItem.is_must+'__'+tempItem.t_Upimgs}}" data-index="{{index}}" data-tIndex="{{tempIndex}}
+                               data-imgsNum="{{tempItem.option_value[0]}}"  bindtap='chooseImgFunc'></input>
+                            </view>
+                            
+                        </view>
+                    </block>
+                </view>
+            </view>
+        </block>
+        <!-- 日期控件模板弹框 -->
+        <view class='modeView' wx:if="{{chooseSize}}" animation='{{animationData}}'>
+            <view class='modeView-zhezhao' wx:if="{{chooseSize}}" catchtap='hideModal'></view>
+            <view class="modeView-info">
+                <view class="modeView-top clearfix">
+                    <view class='quxiao' catchtap='hideModal'>取消</view>
+                    <view class='queding' catchtap='quedingModal'>确定</view>
+                </view>
+                <view class='modeView-bottom'>
+                    <picker-view indicator-style="height: 50px;" style="width: 100%; height: 50vh;" value="{{value}}" bindchange="bindChange">
+                        <picker-view-column>
+                            <view wx:for="{{years}}" data-index="{{index}}" style="line-height: 50px">{{item}}年</view>
+                        </picker-view-column>
+                        <picker-view-column>
+                            <view wx:for="{{months}}" style="line-height: 50px">{{item}}月</view>
+                        </picker-view-column>
+                        <picker-view-column>
+                            <view wx:for="{{days}}" style="line-height: 50px">{{item}}日</view>
+                        </picker-view-column>
+                    </picker-view>
+                </view>
+            </view>
+        </view>
+        <!-- 时间控件模板弹框 -->
+        <view class='modeView' wx:if="{{chooseSize3}}" animation='{{animationData3}}'>
+            <view class='modeView-zhezhao' wx:if="{{chooseSize3}}" catchtap='hideModal3'></view>
+            <view class="modeView-info">
+                <view class="modeView-top clearfix">
+                    <view class='quxiao' catchtap='hideModal3'>取消</view>
+                    <view class='queding' catchtap='quedingModal3'>确定</view>
+                </view>
+                <view class='modeView-bottom'>
+                    <picker-view indicator-style="height: 50px;" style="width: 100%; height: 50vh;" value="{{value3}}" bindchange="bindChange3">
+                        <picker-view-column>
+                            <view wx:for="{{hours}}" style="line-height: 50px">{{item}}时</view>
+                        </picker-view-column>
+                        <picker-view-column>
+                            <view wx:for="{{minutes}}" style="line-height: 50px">{{item}}分</view>
+                        </picker-view-column>
+                        <picker-view-column>
+                            <view wx:for="{{seconds}}" style="line-height: 50px">{{item}}秒</view>
+                        </picker-view-column>
+                    </picker-view>
+                </view>
+            </view>
+        </view>
+        <!-- 日期时间控件模板弹框 -->
+        <view class='modeView' wx:if="{{chooseSize2}}" animation='{{animationData2}}'>
+            <view class='modeView-zhezhao' wx:if="{{chooseSize2}}" catchtap='hideModal2'></view>
+            <view class="modeView-info">
+                <view class="modeView-top clearfix">
+                    <view class='quxiao' catchtap='hideModal2'>取消</view>
+                    <view class='queding' catchtap='quedingModal2'>确定</view>
+                </view>
+                <view class='modeView-bottom'>
+                    <picker-view indicator-style="height: 50px;" style="width: 100%; height: 50vh;" value="{{value2}}" bindchange="bindChange2">
+                        <picker-view-column>
+                            <view wx:for="{{years}}" data-index="{{index}}" style="line-height: 50px">{{item}}年</view>
+                        </picker-view-column>
+                        <picker-view-column>
+                            <view wx:for="{{months}}" style="line-height: 50px">{{item}}月</view>
+                        </picker-view-column>
+                        <picker-view-column>
+                            <view wx:for="{{days}}" style="line-height: 50px">{{item}}日</view>
+                        </picker-view-column>
+                        <picker-view-column>
+                            <view wx:for="{{hours}}" style="line-height: 50px">{{item}}时</view>
+                        </picker-view-column>
+                        <picker-view-column>
+                            <view wx:for="{{minutes}}" style="line-height: 50px">{{item}}分</view>
+                        </picker-view-column>
+                        <picker-view-column>
+                            <view wx:for="{{seconds}}" style="line-height: 50px">{{item}}秒</view>
+                        </picker-view-column>
+                    </picker-view>
+                </view>
+            </view>
+        </view>
+        <!-- 邮寄方式 -->
+        <view class='youji-box bor-1px-b'  wx:if="{{is_server == 2}}">
+            <view class='youji-left'>邮寄方式：</view>
+            <view class='youji-right'>
+                <radio-group class="radio-group">
+                    <label class="radio">
+                        <radio value="1" checked='true'  color="#a88c5d"/>
+                        自取（到公司办公地点领取）
+                    </label>
+                    <label class="radio" catchtap='meailChangeFn'>
+                        <radio value="2" disabled  color="#a88c5d"/>
+                        <!-- <text class='radios-dis'></text> -->
+                        邮寄
+                    </label>
+                </radio-group>
+            </view>
+        </view>
+        <!-- 订单留言 -->
+        <view class='order-msg clear'>
+            <view class='fl order-msg-cap'>订单留言:</view>
+            <view class='fl order-msg-textarea {{isIos?"":"android-txt"}}' >
+                <textarea wx:if="{{isShowTxtarea}}" placeholder-class='order-msg-textarea-place' class="{{isShowPay?'hidden':'show'}}" placeholder="选填：订单留言（45字以内）" auto-height maxlength="45" bindinput='getTextareaVal'></textarea>
+            </view>
+        </view>
+    </view>
+    <!-- 剩余积分 -->
+    <view class='order-place'></view>
+    <view class='order-prices'>
+        <view class='order-prices-list clear'>
+            <view class='fl left'>剩余积分</view>
+            <view class='fr right'>{{userIntegral}} 积分</view>
+        </view>
+    </view>
+    <!-- 商品的总共价格 -->
+    <!-- <view class='price-place'></view> -->
+    <view class='order-place'></view>
+    <view class='order-prices'>
+        <view class='order-prices-list clear'>
+            <view class='fl left'>商品总金额</view>
+            <view class='fr right'>{{totalMoney}} 积分</view>
+        </view>
+        <view class='order-prices-list clear' wx:if="{{totalMoney - totalPayMoney != 0}}">
+            <view class='fl left'>活动优惠</view>
+            <view class='fr right jifen_youhui'>{{totalMoney - totalPayMoney}} 积分</view>
+        </view>
+    </view>
+    <!-- 商品的底部按钮，结算 -->
+    <view class='order-foot-info'>
+        <view class='fr'>
+            <view class='order-foot-txt fl'>实付款：
+                <text>{{totalPayMoney}} 积分</text>
+            </view>
+            <!-- <button class='order-foot-btn fl' form-type="submit" catchtap='sureOrderFn'>提交订单</button> -->
+            <button class='order-foot-btn fl' form-type="submit">提交订单</button>
+            <view class='order-foot-btn nobuy_zhenzhao' wx:if="{{isbuy_zhezBtn}}"></view>
+        </view>
+        <view style='clear:both;'></view>
+    </view>
+    <!-- 支付弹框组件 -->
+    <pay-popup is-show-pay="{{isShowPay}}" pay-integral="{{totalMoney}}" user-integral="{{userIntegral || 0}}" is-use-integral="{{isUseIntegral}}" bindhide="hidePayFn" bindpaysuc="paySucFn" id='{{orderId}}'></pay-popup>
+    </form>
+</view>

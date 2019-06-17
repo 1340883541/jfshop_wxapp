@@ -1,0 +1,532 @@
+// pages/goodDetail/goodDetail.js
+import ajax from '../../utils/request.js';
+import WxParse from '../../wxParse/wxParse.js';
+import { share,nav } from '../../utils/navigate.js';
+const app = getApp();
+
+Page({
+
+    /**
+     * 页面的初始数据
+     */
+    data: {
+        goodId: 0,      // 商品id
+        imgUrls: [],    //banner轮播
+        goodsName: '',  //商品名字
+        goodsmsgtitle: '', //商品描述
+        good_sn:'', //商品编号
+        curprice: 0,    //卖价
+        calcCur: 0,     //卖价 (用于计算)
+        subGoodsKey: 0,  //已选规格的key
+        activeSku: '',  //已选规格
+        sku: [],        //规格数组
+        redSkuArr: [],  //用于渲染置灰规格
+        sub_goods: {},  //所有可能匹配的组合
+        nowBuyId: 0,    //选中的组合的id
+        desc: '',       //商品详情（富文本编辑内容）
+        indicatorDots: true,
+        autoplay: false,
+        interval: 8000,
+        duration: 500,
+        commentImgW: 690,   //包裹品论图片块的宽度
+        scaleDetail: false,  //控制显示隐藏已选择的商品详情
+        oNumber: 1, //控制选择的商品数量
+        oSurplus: 32,   //商品最大数量
+        cartNum: 0,     //购物车数量
+        shoppingCart: false,    //控制购物车+1动画
+        sale: 1,    //是否上架 1上架 2下架
+        allGray: 1,  //加入购物车&立即购买遮盖
+        noStock:1, // 商品是否缺货  1 不缺，2 缺货
+        priceY:0,  //卖价
+        priceDis:0, //折扣价
+        priceOld:0,//原价
+        // 支付等按钮遮罩
+        isbuy_zhenzhabtn:false,
+
+    },
+    /**
+     * 生命周期函数--监听页面加载
+     */
+    
+    onLoad: function (options) {
+      // console.log(options)
+        var res = wx.getSystemInfoSync(), screenW = res.windowWidth;
+        this.setData({
+            goodId: options.id,
+            windowWidth: screenW + 'px', // 屏幕宽度
+            windowHeight: res.screenHeight + 'px', //屏幕高度
+            picHeight: "480rpx",// 图片高度
+        });
+        
+        let pages = getCurrentPages();
+        let prevPage = pages[pages.length - 2];
+        if (prevPage){
+            prevPage.setData({
+                refresh: false
+            })
+
+        }
+        if(app.globalData.userInfo.nickName == undefined){
+            this.setData({
+                noLogin: true
+            })
+        }
+
+        this.renderFunc();
+    },
+    //数据初始
+  onShow: function(){
+    this.setData({
+      oNumber: 1,
+      curprice: wx.getStorageSync('curprice'),
+      priceY: wx.getStorageSync('priceY'),
+    });
+  },
+    // /**
+    //  * 分享
+    //  */
+    // onShareAppMessage:function(){
+    //     let shareParam = share({
+    //         path:'pages/goodDetail/goodDetail',
+    //         data:{
+    //             goodId: _this.data.goodId
+    //         },
+    //         success:function(){
+    //             wx.showToast({
+    //                 title: '转发成功',
+    //             })
+    //         }
+    //     });
+    //     return shareParam;  
+    // },
+    // 预览图片
+    enlargePic:function(e){
+        let _this = this,
+            currImg = e.currentTarget.dataset.src;
+        wx.previewImage({
+            current: currImg,
+            urls: _this.data.imgUrls || []
+        })
+    },
+    changeIndex:function(e){
+        // 设置当前处激活状态swiper的index
+        this.setData({
+            activeIndex: e.detail.current
+        })
+    },
+    // 渲染详情
+    renderFunc(){
+        const _this = this;
+        wx.showLoading({
+            title: '加载中',
+            mask: true,
+            tag:0,
+        })
+        ajax.ajaxFunc({
+            url: 'api/goods/goodsInfo',
+            data: {
+               id: _this.data.goodId,
+               openid: app.globalData.openId || wx.getStorageSync('openid')
+            },
+            success: function (r) {
+                if (r.code == 1){
+                    _this.setData({
+                        imgUrls: r.data.goods.goods_gallery,
+                        goodsName: r.data.goods.name,
+                        goodsmsgtitle: r.data.goods.long_title,
+                        good_sn: r.data.goods.good_sn,
+                        curprice: r.data.goods.price_dis,
+                        calcCur: r.data.goods.price_dis,
+                        priceY: r.data.goods.price_y,
+                        priceOld:r.data.goods.price_y,
+                        priceDis: r.data.goods.price_dis, 
+                        sku: r.data.goods.sku,
+                        sub_goods: r.data.goods.sub_goods,
+                        oSurplus: r.data.goods.stock,
+                        desc: r.data.goods.desc,
+                        cartNum: r.data.cart_num,
+                        sale: r.data.goods.is_sale,
+                        noStock:r.data.goods.no_stock,
+                        integral_level: r.data.goods.integral_level,
+                        user_level: r.data.goods.user_level,
+                        tag:r.data.tag
+
+                    })
+
+                    if(_this.data.sku.length > 0){
+                        _this.goodsSkuData(_this.data.sku);
+                    }
+                    
+                    
+                    WxParse.wxParse('about', 'html', _this.data.desc, _this, 0);
+                   
+                    
+                }
+                wx.setStorageSync('curprice', r.data.goods.price_dis)
+              wx.setStorageSync('priceY', r.data.goods.price_y)
+                wx.hideLoading();
+            }
+        })
+    },
+    // 显示隐藏选择的商品详情
+    scaleDetailSh(){
+        let _this = this;
+        this.setData({
+            scaleDetail: !_this.data.scaleDetail
+        })
+    },
+    // 获取点击的商品规格下标 然后进行修改数据 （未渲染）
+    switchGoodsAni(e){
+        let fIndex = e.currentTarget.dataset.index;
+        let sIndex = e.currentTarget.dataset.sindex;
+        let arr = this.data.sku;
+
+        if(arr[fIndex].attr[sIndex].is_default == 1){
+            return false;
+        }
+   
+        for(let i = 0; i < arr[fIndex].attr.length; i++){
+            arr[fIndex].attr[i].is_default = 0;
+        }
+
+        arr[fIndex].attr[sIndex].is_default = 1;
+
+        this.setData({
+            oNumber: 1
+        })
+
+        this.goodsSkuData(arr);
+    },
+    // 根据选中商品规格对选中商品规格不存在的组合置灰 （渲染）
+    goodsSkuData(pArr){
+        let arr = pArr;     // 后台数据 或者 点击后修改的数据
+        let allGray = 1;    // 加入购物车&立即购买遮盖
+        let sVal = '';      // 选中的规格文字描述
+        let sKey = '';      // 选中的规格组合key
+        let noGoodsArr = [];    // 储存json对象转换出来的数组
+        let skuValArrAll = [];  // 储存库存为0的key
+        let skuValArr = [];     // 储存库存为0 与 当前选择的规格匹配的key
+        let renderSkuArr = [];  // 储存重组skuValArr数据结构
+
+        // 将json 转换为 数组
+        // {                            [
+        //     key1: {},           =>       {},
+        //     key2: {},           =>       {},
+        //     ......                       ......
+        // }                           ]
+
+        // for (let item in this.data.sub_goods) {
+        //     noGoodsArr.push(this.data.sub_goods[item]);
+        // }
+        
+        //将库存为0的组合key筛选出来存为二位数组
+        // [                                                [
+        //     {sku_val: "6,5,10", goods_number: 0},    =>      [6,5,10],
+        //     {sku_val: "7,11,10", goods_number: 0},   =>      [7,11,10],
+        //     ......                                           ......
+        // ]                                                ]
+
+        for (let l = 0; l < noGoodsArr.length; l++) {
+            if (Number(noGoodsArr[l].goods_number) <= 0) {
+                skuValArrAll.push(noGoodsArr[l].sku_val.split(':'));
+            }
+        }
+
+        // 操作已选中的规格
+        for (let j = 0; j < arr.length; j++) {
+            for (let k = 0; k < arr[j].attr.length; k++) {
+                if (arr[j].attr[k].is_default == 1) {
+                    sKey += arr[j].attr[k].key + ':';   //确定选中的规格的key拼接出来
+                    sVal += arr[j].attr[k].val + ' ';   //选中的规格文字展示
+                }
+            }
+        }
+
+        sKey = sKey.substring(0, sKey.length - 1);  //将拼接出来的key尾巴的':'去除
+
+        // 库存为0的key 与 选中的key 进行匹配从库存为0的key中筛选出匹配的数据存为二位数组
+        // [                                       [
+        //     [6,5,10],                               [6,5,10],
+        //     [7,11,10],  ?   [6,3,8]     =>          ......
+        //     ......                                  
+        // ]                                       ]
+        for(let m = 0; m < skuValArrAll.length; m++){
+            for(let n = 0; n < skuValArrAll[m].length; n++){
+                if(skuValArrAll[m][n] == sKey.split(':')[n]){
+                    skuValArr.push(skuValArrAll[m]);
+                }
+            }
+        }
+        
+        // 当所有组合剩余数量都小于等于0的情况下将所有的筛选规格置灰
+        if(sKey == ''){
+            allGray = 2;        // 所有组合剩余数量都小于等于0的情况下将加入购物车和立即购买遮盖打开
+
+            sKey = noGoodsArr[0].sku_val;
+
+            for(let i = 0; i < noGoodsArr[0].sku_val.split(':').length; i++){
+                renderSkuArr[i] = [];
+            }
+
+            for(let p = 0; p < skuValArrAll.length; p++){
+                for(let q = 0; q < skuValArrAll[0].length; q++){
+                    renderSkuArr[q][skuValArrAll[p][q]] = true;
+                }
+            }
+        }
+        
+        //如果没有从库存为0的key中筛选出匹配的数据不执行
+        if(skuValArr.length > 0){
+            // 将二位数组初始化
+            // [x,x] => [[],[]]
+            // [x,x,x] => [[],[],[]]
+            // [x,x,x,x] => [[],[],[],[]]
+            for(let i = 0; i < skuValArr[0].length; i++){
+                renderSkuArr[i] = [];
+            }
+            
+            // 将匹配的数据解构进行修改
+            // a[i][j] == b[j] ? false : true
+            // 将key单个拆开匹配 匹配成功的将单个key设为下标存为 false 不匹配的将单个key设为下标存为 true
+            // [                          [
+            //     [6,5,10], ? [6,3,8] =>     [false] index 6
+            //     ......                     [true] index 5
+            //                                [true] index 10
+            // ]                          ]
+            for(let p = 0; p < skuValArr.length; p++){
+                for(let q = 0; q < skuValArr[0].length; q++){
+                    if(skuValArr[p][q] == sKey.split(':')[q]){
+                        renderSkuArr[q][skuValArr[p][q]] = false;
+                    }else{
+                        renderSkuArr[q][skuValArr[p][q]] = true;
+                    }
+                }
+            }
+        }
+        this.setData({
+            oSurplus: this.data.sub_goods[sKey].goods_number,
+            priceY: this.data.sub_goods[sKey].price_y,
+            priceOld:this.data.sub_goods[sKey].price_y,
+            curprice: this.data.sub_goods[sKey].price_dis,
+            calcCur: this.data.sub_goods[sKey].price_dis,
+            nowBuyId: this.data.sub_goods[sKey].id,
+            allGray: allGray,
+            activeSku: sVal,
+            subGoodsKey: sKey,
+            sku: arr,
+            redSkuArr: renderSkuArr
+        })
+    },
+
+    // 数量选择  减
+    numberJian: function(){
+      this.data.priceY = this.data.priceOld
+      console.log(this.data.priceY)
+        let oNum = Number(this.data.oNumber) - Number(1);
+        if(oNum > 0){
+            let calcCur = (this.data.calcCur * oNum).toFixed(0);
+            let calcOri = (this.data.calcOri * oNum).toFixed(0);
+            let priceYall = (this.data.priceY * oNum).toFixed(0);
+            this.setData({
+                oNumber: oNum,
+                curprice: calcCur,
+                priceY: priceYall
+            })
+
+        }else{
+            return false;
+        }
+    },
+    // 数量选择  加
+    numberJia: function () {
+      this.data.priceY = this.data.priceOld
+        let oNum = Number(this.data.oNumber) + Number(1);
+        if(this.data.oSurplus <= 99){
+            if(oNum <= this.data.oSurplus){
+                let calcCur = (this.data.calcCur * oNum).toFixed(0);
+                let calcOri = (this.data.calcOri * oNum).toFixed(0);
+                let priceYall = (this.data.priceY * oNum).toFixed(0);
+                this.setData({
+                    oNumber: oNum,
+                    curprice: calcCur,
+                    priceY: priceYall
+                })
+        
+            }else{
+                return false;
+            }
+        }else{
+            if(oNum <= 99){
+                let calcCur = (this.data.calcCur * oNum).toFixed(0);
+                let calcOri = (this.data.calcOri * oNum).toFixed(0);
+              let priceYall = (this.data.priceY * oNum).toFixed(0);
+                this.setData({
+                    oNumber: oNum,
+                    curprice: calcCur,
+                    priceY: priceYall
+                })
+          
+            }else{
+                return false;
+            }
+        }
+    },
+    oNumberFunc(e){
+        this.data.priceY = this.data.priceOld;
+        if (e.detail.value > 99 || e.detail.value > this.data.oSurplus){
+            wx.showToast({
+                title: '数量超出范围',
+                icon: 'none',
+                duration: 2000
+            });
+        }else{
+            let oNum = Number(e.detail.value > 0 ? e.detail.value : 1);
+                let calcCur = (this.data.calcCur * oNum).toFixed(0);
+                let calcOri = (this.data.calcOri * oNum).toFixed(0);
+                let priceYall = (this.data.priceY * oNum).toFixed(0);
+                this.setData({
+                    oNumber: oNum,
+                    curprice: calcCur,
+                    priceY: priceYall
+                })
+        }
+    },
+    submit:function(e){
+        // console.log(e.detail.formId)
+        // console.log('模板发送');
+        ajax.ajaxFunc({
+            url: 'api/index/getFormId',
+            data: {
+                openid: app.globalData.openId || wx.getStorageSync('openid'),
+                formId: e.detail.formId
+            },
+            success: function (r) {
+                // console.log(JSON.stringify(r))
+            }
+        })
+    },
+
+    // 添加到购物车
+    addCart() {
+        
+        const _this = this;
+        let key = this.data.subGoodsKey;
+
+        // console.log(this.data.oNumber)
+
+        ajax.ajaxFunc({
+            url: 'api/cart/addCart',
+            data: {
+                openid: app.globalData.openId || wx.getStorageSync('openid'),
+                goods_id: this.data.goodId,
+                number: this.data.oNumber,
+                goods_sub_id: this.data.sub_goods.length == 0 ? '' : this.data.sub_goods[key].id,
+                sku: this.data.sub_goods.length == 0 ? '' : this.data.sub_goods[key].sku,
+                sku_val: this.data.sub_goods.length == 0 ? '' : this.data.sub_goods[key].sku_val
+            },
+            success: function (r) {
+                //console.log(r);
+                if (r.code == 1) {
+                    _this.addCartAni();
+                    wx.setStorageSync('isRefreshCart', 1)
+                }else if(r.code == 101){
+                    wx.showToast({
+                        title: '添加成功',
+                        icon: 'success',
+                        duration: 2000
+                    });
+                    wx.setStorageSync('isRefreshCart', 1)
+                }else if(r.code == 0){
+                    wx.showToast({
+                        title: r.msg,
+                        icon: 'none',
+                        duration: 2000
+                    });
+                    wx.setStorageSync('isRefreshCart', 1)
+                }else if(r.code == 4){
+                    wx.showToast({
+                        title: r.msg,
+                        icon: 'none',
+                        duration: 2000
+                    });
+                    wx.setStorageSync('openid', '');
+                    wx.setStorageSync('isLogin', 0);
+                    wx.clearStorageSync();
+                    app.globalData.isLogin = 0;
+                    wx.navigateTo({
+                        url: '../verifyPhone/verifyPhone'
+                    })
+                }
+            }
+        })
+    },
+
+    // 添加到购物车动画效果
+    addCartAni(){
+        let _this = this;
+        let oNum = Number(this.data.cartNum) + 1;
+        let sNum = oNum.toString();
+        if(this.data.shoppingCart){
+            return false;
+        }else{
+            app.globalData.cartNum = sNum;
+
+            this.setData({
+                shoppingCart: true,
+                cartNum: oNum
+            });
+            
+            setTimeout(function () {
+                _this.setData({
+                    shoppingCart: false
+                })
+            }, 400);
+        }
+    },
+
+    // 跳转到购物车页面
+    gotocart(){
+        wx.switchTab({
+            url: '/pages/cart/cart'
+        })
+    },
+
+    // 立即购买跳转
+    gotoNowBuy(){
+        let _this = this;
+        if(this.data.oSurplus <= 0){
+            wx.showToast({
+                title: '商品库存不足',
+                icon: 'none',
+                duration: 2000
+            });
+            return false;
+        } else if (this.data.integral_level > this.data.user_level){
+          wx.showToast({
+            title: '积分等级不足',
+            icon: 'none',
+            duration: 2000
+          });
+        }else{
+            this.setData({
+                isbuy_zhenzhabtn: true
+            })
+            let param = {},str = '';
+            param.goods_sub_id = this.data.nowBuyId;
+            param._from = 1;
+            param.goods_id = this.data.goodId;
+            param.number = this.data.oNumber;
+            nav('navigateTo','../nowBuy/nowBuy',param);
+            setTimeout(function () {
+                _this.setData({
+                    isbuy_zhenzhabtn: false
+                })
+            }, 1000)
+        }
+        setTimeout(function () {
+            _this.setData({
+                isbuy_zhenzhabtn: false
+            })
+        }, 2000)
+    }
+})

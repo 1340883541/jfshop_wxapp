@@ -1,0 +1,353 @@
+<!--index.wxml-->
+<view class="container">
+
+    <view class="alertmode" wx-if="{{isMode}}">
+        <view class="alertmode_body"  bindtap='openDetail' >
+            <image  class='alertmode_bj' src='{{actInfo.img}}'></image>
+            <!-- <view class='alertmode_infobox'>
+                <view class='alertmode_info'>
+                    <view class='alertmode_infotit'>
+                        <view>您有一份</view>
+                        <view>活动邀请函待领取</view>
+                    </view>
+                    <view class='alertmode_content'>
+                        <view class='alertmode_con_name'>{{actInfo.title}}</view>                    
+                        <view class='alertmode_con_time'>{{actInfo.start_time}}</view>                    
+                        <view class='alertmode_con_location'>{{actInfo.address}}</view>                    
+                        <view class='alertmode_con_phone'>{{actInfo.tel_phone}}</view> 
+                    </view>
+                </view>
+                <view class='alertmode_btn' bindtap='openDetail'>查看活动详情</view>
+            </view>  -->
+            <!-- <view class='close_mode' bindtap='closeModeFunc'><image src='../../images/close_mode.png'></image></view>        -->
+            <view class='close_mode'><image src='../../images/close_mode.png'></image></view>       
+        </view>
+    </view>
+    <view class='search-component'>
+        <search text="{{ searTxt }}" bindtap='focusInputFunc' wx:if='{{ !swiSear }}'></search>
+        <view class='index-view' wx:else>
+            <input type='text' focus='{{ swiSear }}' confirm-type='search' bindconfirm="bindconfirm" bindblur='blurInputFunc' value='{{ searVal }}'></input>
+        </view>
+        <!--分类  -->
+        <view class='nav-iconbtn' bindtouchstart="opennav">
+            <image src='../../images/feilei_icon.png'></image>
+        </view>
+        <view class="nav_boxs hide{{isnav?'show':''}}"  bindtouchstart="opennav" style="height:{{winHeight}}" >
+            <i class="sanjiao-icon"></i>
+            <view class='nav-list'>
+                <view class='nav-item' catchtap='goToClalist' data-id='{{ item.id }}' wx:for="{{good_class}}" wx:for-item="item" wx:key="{{ item.id }}" wx:for-index="index">
+                    <text>{{item.name}}</text><i class="nav_xiahua"></i>
+                </view>
+            </view>
+        </view>
+    </view>
+    
+    <view class='banner-top w100'>
+        <swiper indicator-dots="{{indicatorDots}}" class="{{imgUrls.length < 1 ? 'placeholder-icon' : ''}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" circular='true' style="height:{{picHeight}}">
+            <block wx:for="{{imgUrls}}" wx:key="uni">
+                <swiper-item class="placeholder-icon" data-type="{{item.type}}" data-url="{{item.href}}" data-goodid="{{item.goods_id}}" catchtap="gotoWeb" >
+                    <image id='{{ item.id }}' mode="aspectFill" src="{{item.img}}"/>
+                </swiper-item>
+            </block>
+        </swiper>
+    </view>
+    
+    <!-- 积分换购 -->
+    <!-- <view class='hg-section'>
+        <view class='hg-list clearfix'>
+            <view class='hg-li'>
+                <view class='hg-itemtop'></view>
+                <view class='hg-itembottom hg-zong'>
+                    <view class='hg-btitF'>NEW</view>
+                    <i class='xiahua-icon'></i>
+                    <view class='hg-titdesc'>积分换购最新商品</view>
+                </view>                
+            </view>
+            <view class='hg-li'>
+                <view class='hg-itemtop'></view>
+                <view class='hg-itembottom hg-hei'>
+                    <view class='hg-btitF'>HOT</view>
+                    <i class='xiahua-icon'></i>
+                    <view class='hg-titdesc'>积分换购最热商品</view>
+                </view>
+            </view>
+             <view class='hg-li'>
+                <view class='hg-itemtop'></view>
+                <view class='hg-itembottom hg-hui'>
+                    <view class='hg-btitF'>BEST</view>
+                    <i class='xiahua-icon'></i>
+                    <view class='hg-titdesc'>积分换购最好商品</view>
+                </view>
+            </view>
+        </view>
+    </view> -->
+    <!--广告  -->
+    <!-- <view class='adv-section'>
+        <view class='adv-item flex-wrap flex-align' bindtap='gotoNotice'>
+            <view class='adv-tit'>商城公告：</view>
+            <view class='adv-scroll flex-con'>
+                <view class='adv-block' animation="{{animationData}}">
+                    <block wx:for="{{advArr}}" wx:key="uni">
+                        <view class='adv-scroll-i elipse'>{{ item.title }}</view>
+                    </block>
+                </view>
+            </view>
+            <view class='adv-more'>更多</view>
+        </view>
+    </view> -->
+    <view class='adv-section'>
+        <view class='adv-item flex-wrap flex-align' bindtap='gotoNotice' wx:if="{{advArr != ''}}">
+            <view class='adv-tit'><image src='../../images/adv_news.jpg'></image></view>
+            <view class='adv-scroll flex-con'>
+                <view class='adv-block' animation="{{animationData}}">
+                    <block wx:for="{{advArr}}" wx:key="uni">
+                        <view class='adv-scroll-i'>
+                            <view class='adv-xinpinfo'>
+                                <view class='adv-xinp elipse'>
+                                    <view class='adv-xinpbtn'>{{item.tag}}</view>
+                                    <view class='adv-xinptitle'>{{ item.title }}</view>
+                                </view>
+                                <view class='adv-xinpmsg elipse'>
+                                    {{item.subtitle}} 
+                                </view>
+                            </view>
+                            <view class='adv-xinpimg'><image src='{{item.img}}'></image></view>
+                        </view>
+                    </block>
+                </view>
+            </view>
+            <view class='adv-more'></view>
+        </view>
+        <view class='adv-item flex-wrap flex-align' bindtap='gotoNotice' wx:if="{{advArr == ''}}">
+            <view class='adv-tit'><image src='../../images/adv_news.jpg'></image></view>
+            <view class='adv-scroll flex-con'>
+                <view class='adv-block'>
+                    <view class='adv-scroll-i'>
+                        <text class='no_gongao'>暂无公告</text>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+    <!-- 公共阴影 -->
+    <view class='box-showtemp'><image src='../../images/box-show.png'></image></view>
+    <!--快速查找  -->
+    <view class='ks_look' wx:if="{{good_class.length > 0}}" data-length="{{good_class.length}}">
+        <view class='ks_titpic'><image src='../../images/index-pic2.jpg'></image></view>
+        <view class='ks_info clearfix'>
+            <view class='ks_item' catchtap='goToClalist' data-id='{{ item.id }}' wx:if="{{index < 4}}" wx:for="{{good_class}}" wx:for-item="item" wx:key="{{ item.id }}" wx:for-index="index">
+                <view class='ks_item_box'>
+                    <view class='ks_item_icon'>
+                        <image src='{{item.icon ? item.icon : ""}}'></image>
+                    </view>
+                    <view class='ks_item_info'>
+                        <view class='ks_tit'>
+                            {{item.name}}
+                        </view>
+                        <view class='ks_english'>{{item.lname ? item.lname : ""}}</view>
+                    </view>
+                </view>   
+            </view>
+            <!-- 敬请期待 -->
+            <view class='ks_item'>
+                <view class='ks_item_box'>
+                    <view class='ks_item_icon'>
+                        <image style="height:56rpx;" src='../../images/coming-soon.png'></image>
+                    </view>
+                    <view class='ks_item_info'>
+                        <view class='ks_tit'>
+                            敬请期待
+                        </view>
+                        <view class='ks_english'>Coming soon</view>
+                    </view>
+                </view>   
+            </view>
+            <view class='ks_item'>
+                <view class='ks_item_box'>
+                    <view class='ks_item_icon'>
+                        <image style="height:56rpx;" src='../../images/coming-soon.png'></image>
+                    </view>
+                    <view class='ks_item_info'>
+                        <view class='ks_tit'>
+                            敬请期待
+                        </view>
+                        <view class='ks_english'>Coming soon</view>
+                    </view>
+                </view>   
+            </view>
+
+        </view>
+    </view>
+    <!--新品推荐  -->
+    <view class='thunk-section tuijian'>
+        
+        <view class='thunk-title flex-wrap flex-align flex-side'>
+            <image src='../../images/index-pic3.jpg'></image>
+        </view>
+        <view class='good-lists clearfix'>
+            <view class='good-item floatL' catchtap='goToDetail' data-id='{{ item.id }}' wx:for="{{ goods }}" wx:for-item="item" wx:key="{{ item.id }}">
+                <view class='good-square'>
+                    <view class='good-pic-s placeholder-icon'>
+                        <image src='{{ item.goods_img ? item.goods_img : ""}}'  mode='aspectFill' lazy-load='true'></image> 
+                    </view>
+                    <!-- <text class='good-title-s elipse'>{{ item.name }}</text>
+                    <view class='good-jfprice'>
+                        <text class='jifen'>{{ item.price_y }}积分</text>
+                        <view class='gobuy_btn'><image src='../../images/buy_btn.jpg'></image></view>
+                    </view> -->
+                    <view class='good-name elipse'>{{item.name}}</view>
+                    <view class='good-jfprice'>
+                        <view class='gobuy_btn' wx:if="{{item.price_dis!=0}}">{{ item.price_dis }} 积分</view>
+                        <view class='gobuy_btn' wx:if="{{item.price_dis==0}}">免费</view>
+                        <text class='jifen_y' wx:if="{{item.price_y != item.price_dis}}">{{item.price_y}} 积分</text>                        
+                    </view>
+                    <text class='good-title-s elli-2'>{{ item.long_title }}</text>
+                    
+                    <view class='que-btn' wx:if="{{ item.no_stock == 2}}">缺货</view>
+                </view>
+            </view>
+
+        </view> 
+    </view>
+    <!-- 特色服务  -->
+    <!-- <view class='fuwu_section'>
+        <view class='fuwu_tit'>
+            <image src='../../images/index-pic4.jpg'></image>
+        </view>
+        <view class='fuwu_li'>
+            <view class='fuwu_list_img'><image src='../../images/index-pic5.jpg'></image></view>
+            <view class='fuwu_money_box'>
+                <view class='fuwu_mom'>
+                    <image src='../../images/money_icon.png'></image>
+                    <text>2500积分</text>
+                </view>
+                <view class='fuwu_buybtn'>BUY<i class="youjian">＞</i></view>
+            </view>
+            <view class='fuwu_money_title'>澳洲文案翻译</view>
+        </view>
+        <view class='fuwu_li'>
+            <view class='fuwu_list_img'><image src='../../images/index-pic5.jpg'></image></view>
+            <view class='fuwu_money_box'>
+                <view class='fuwu_mom'>
+                    <image src='../../images/money_icon.png'></image>
+                    <text>1000积分</text>
+                </view>
+                <view class='fuwu_buybtn'>BUY<i class="youjian">＞</i></view>
+            </view>
+            <view class='fuwu_money_title'>墨尔本接机服务</view>
+        </view>
+    </view> -->
+        <!--分隔图  -->
+    <view class='fenge_pic'><image src='../../images/index-pic1.jpg'></image></view>
+    <!--发现新品  -->
+    <view class='newgood_section'>
+        <view class='newgood_tit'>
+            <image src='../../images/index-pic7.jpg'></image>
+        </view>
+        <!--新品推荐1  -->
+        <view class='best_newgood_body' catchtap='goToDetail' wx:if="{{index == 0}}" data-id='{{ item.id }}' wx:for="{{new_goods}}" wx:for-item="item" wx:key="{{ item.id }}" wx:for-index="index">
+            <view class='best_newg_img'><image src='{{ item.goods_img ? item.goods_img : "" }}'></image></view>
+            <view class='best_mom_box clearfix'>
+                <view class='best_mom' wx:if="{{item.price_dis != 0}}">{{item.price_dis}}积分</view>
+                <view class='best_mom' wx:if="{{item.price_dis == 0}}">免费</view>
+                
+                <view class='fuwu_buybtn btn_mar'><image src='../../images/buy_btn2.jpg'></image></view>
+            </view>
+            <view class='best_msgtitle'>{{item.name}}</view>
+            <view class='que-btn que-xinpinone' wx:if="{{ item.no_stock == 2}}">缺货</view>
+        </view>
+        <!--新品列表  -->
+        <view class='new_list clearfix'>
+            <view class='new_li' catchtap='goToDetail' wx:if="{{index > 0}}" data-id='{{ item.id }}' wx:for="{{new_goods}}" wx:for-item="item" wx:key="{{ item.id }}" wx:for-index="index">
+                <view class='new-square'>
+                    <view class='new_li_img'><image src='{{ item.goods_img ? item.goods_img : "" }}'></image></view>
+                    <!-- <view class='new_li_info'>
+                        <view class='new_info_tit elipse'>{{item.name}}</view>
+                        <view class='new_info_msg'>
+                            <view class='new_mom'>
+                                <text class='new_num'>{{item.price_y}}积分</text>
+                                <text class='yishou'>（已售{{item.sales}}件）</text>
+                            </view>
+                            <view class='new_shopbtn'><image src='../../images/goshop_icon.png'></image></view>
+                        </view>
+                    </view> -->
+                    <view class='new_li_info'>
+                        <view class='new_info_msg new_info_name elipse'>{{item.name}}</view>
+                         <view class='new_info_msg jifen_info'>
+                            <view class='new_mom'>
+                                <view class='new_shopbtn' wx:if="{{item.price_dis!=0}}">{{ item.price_dis }} 积分</view>
+                                <view class='new_shopbtn' wx:if="{{item.price_dis==0}}">免费</view>   
+                                <view class='jifen_y' wx:if="{{item.price_y != item.price_dis}}">{{item.price_y}}积分</view>                      
+                            </view>
+                        </view>
+                        <view class='new_info_tit elli-2'>{{item.long_title}}</view>                    
+                    </view>
+                    <view class='que-btn que-newli' wx:if="{{ item.no_stock == 2}}">缺货</view>
+                </view>
+            </view>                                    
+        </view>
+    </view>
+    <!--分隔图  -->
+    <view class='fengetwo_pic'><image src='../../images/index-pic10.jpg'></image></view>
+    <!--年度优惠  -->
+    <!-- <view class='youhui_section'>
+        <view class='youhui_tit'><image src='../../images/index-pic11.jpg'></image></view>
+        <view class='youhui_list'>
+            <view class='youhui_li'>
+                <view class='youhui_lileft'><image src='../../images/index-pic12.jpg'></image></view>
+                <view class='youhui_liright'>
+                    <view class='youhui_title elipseone'>BROLOS 澳洲大龙虾</view>
+                    <view class='youhui_msg elipseone'>鲜活生鲜野生岩石大龙虾 约760g/只</view>
+                    <view class='youhui_mom'>5320积分</view>                    
+                    <view class='youhui_buybtn'>BUY<i class="youjian">＞</i></view>                    
+                </view>
+            </view>
+            <view class='youhui_li'>
+                <view class='youhui_lileft'><image ></image></view>
+                <view class='youhui_liright'>
+                    <view class='youhui_title elipseone'>BROLOS 澳洲大龙虾</view>
+                    <view class='youhui_msg elipseone'>鲜活生鲜野生岩石大龙虾 约760g/只鲜活生鲜野生岩石大龙虾 约760g/只</view>
+                    <view class='youhui_mom'>5320积分</view>                    
+                    <view class='youhui_buybtn'>BUY<i class="youjian">＞</i></view>                    
+                </view>
+            </view>            
+            <view class='youhui_li'>
+                <view class='youhui_lileft'><image ></image></view>
+                <view class='youhui_liright'>
+                    <view class='youhui_title elipseone'>BROLOS 澳洲大龙虾</view>
+                    <view class='youhui_msg elipseone'>鲜活生鲜野生岩石大龙虾 约760g/只</view>
+                    <view class='youhui_mom'>5320积分</view>                    
+                    <view class='youhui_buybtn'>BUY<i class="youjian">＞</i></view>                    
+                </view>
+            </view>                    
+        </view>
+        <view class='share_about'>
+            <view class='guangzhu'><image src='../../images/index_guangzhu.jpg'></image></view>
+            <view class='share'><image src='../../images/index-share.jpg'></image></view>
+        </view>
+    </view> -->
+    <!-- <view class='footer'><image src='../../images/index-pic13.jpg'></image></view> -->
+    <view class='footer'>
+        <view class='foo_logo'><image src='../../images/foo_logo.png'></image></view>
+        <view class='foo_msg'>
+            <text>澳洲金鼎四大主营业务</text>
+            <text>土地开发·置业投资·基金管理·移民留学</text>
+            <text>一次合作 终生服务</text>
+        </view>
+        <view class='foo_country'>
+            <text>墨尔本</text>
+            <text>悉尼</text>
+            <text>上海</text>
+            <text>北京</text>
+            <text>重庆</text>
+            <text>成都</text>
+            <text>武汉</text>
+            <text>杭州</text>
+            <text>南京</text>
+            <text>福州</text>
+            <text>青岛</text>
+            <text>厦门</text>
+        </view>
+    </view>
+    
+</view>

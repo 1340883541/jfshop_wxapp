@@ -1,0 +1,10 @@
+<!--active.wxml-->
+<import src="../../wxParse/wxParse.wxml"/>
+<view class="container">
+    <view class='luodi_body'>
+        <!-- <view class='luodi_banner margin_b'><image class='luodi_page' src="{{actInfo.content_img}}"></image></view> -->
+        <view class='luodipro_body'>
+            <template is="wxParse" data="{{wxParseData: about.nodes}}" />
+        </view>
+    </view>
+</view>

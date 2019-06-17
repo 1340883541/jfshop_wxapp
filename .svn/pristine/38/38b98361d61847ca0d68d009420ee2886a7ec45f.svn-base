@@ -1,0 +1,64 @@
+page, .container , .asset_body{
+    background: #f7f7f7;
+}
+/* .container{
+    width: 100%;
+    min-height: 100vh;
+}
+
+scroll-view{
+    width: 100%;
+    height: 100vh;
+} */
+.asset_li{
+}
+.asset_li .asset_time{
+    width: 100%;
+    height: 110rpx;
+    display: block;
+    overflow:hidden;
+}
+.asset_time text{
+    width:300rpx;
+    height:32rpx;
+    line-height:33rpx;
+    background-color:#d5d5d5;
+    border-radius:32rpx;
+    text-align:center;
+    margin:39rpx auto;
+    overflow:hidden;
+    font-size:24rpx;
+    color:#fff;
+    display: block;
+}
+.asset_li .asset_info{
+    background: #fff;padding: 26rpx 34rpx 30rpx 34rpx;
+}
+.asset_li .asset_tit{
+    font-size: 26rpx;line-height: 40rpx;color: #000;font-weight: bold;
+}
+.asset_jindu{
+font-size: 26rpx;
+    margin-bottom: 10rpx;float: right;
+}
+.asset_jinduBtn{
+    width:100%;
+    line-height:24rpx;
+    text-align:right;
+    font-size:24rpx;
+    color:#3399ff;
+    font-weight:bold;
+    border-bottom:1px solid #3399ff;
+    display:inline-block;
+    padding-bottom:4rpx;
+}
+.asset_xiaoquFmian{
+    width: 100%;
+    height: 420rpx;
+}
+.asset_xiaoquFmian image{
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}

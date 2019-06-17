@@ -1,0 +1,24 @@
+@import  "../../wxParse/wxParse.wxss";
+.about-title{
+    height: 64rpx;
+    line-height: 76rpx;
+    overflow: hidden;
+    font-size: 30rpx;
+    color:#333333;
+}
+.about-info{
+    text-indent: 2em;
+    line-height: 48rpx;
+    font-size: 28rpx;
+    color:#666666;
+}
+.about-info text{
+    display: block;
+    text-indent: 2em;
+}
+/* .w-wrap{
+    padding:0 30rpx;
+} */
+.w-wrap image{
+    width:100% !important;
+}

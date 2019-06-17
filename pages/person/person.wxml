@@ -1,0 +1,183 @@
+<!--pages/person/person.wxml-->
+<view class='container'>
+    <!--头部box  -->
+    <view class='head-top padbot28 clearfix'>
+        <view class='head-bg-top'><image src='../../images/center_bj.jpg'></image></view>
+        <view class='head-box-float'>
+            <view class='head-box-main' catchtap='goJfruleFunc'>
+                <!-- <image class='bai_bj' src='../../images/baij.png'></image> -->
+                <image class='head-pic  placeholder-icon' src='{{user.avatarUrl}}' mode='aspectFit'></image>
+                <view class='float-box'>
+                    <view class='user-name elipse'>{{user.username}}</view>
+                    <view class='user-phone-level flex-wrap flex-align' wx:if="{{personInfo.phone}}">
+                        <!-- <image class='user-level' src='../../images/phone_icon.png'></image> -->
+                        <text class='user-phone'>{{personInfo.phone}}</text>
+                    </view>
+                    <view class='user-root user-phone-level flex-wrap flex-align' data-tag="{{tag}}" wx:if="{{!tag || tag == 0}}">
+                        <text class=''>{{personInfo.vip_title}}会员</text>
+                        <text class=''>尊享{{personInfo.vip_no}}</text>
+                    </view>
+                    <view class='user-root user-phone-level flex-wrap flex-align' data-tag="{{tag}}" wx:if="{{tag && tag == 1}}">
+                        <text class=''>{{personInfo.vip_title}}</text>
+                    </view>
+                    <!-- <view class='user-nav flex-wrap flex-align'>
+                        <view class='user-nav-i flex-con' catchtap='skipJifen'>
+                            <view class='user-nav-count'>{{personInfo.integral}}</view>
+                            <view class='user-nav-tit'>积分</view>
+                        </view>
+                    </view> -->
+                </view>
+            </view>
+        </view>
+    </view>
+    <!--我的订单  -->
+    <view class='order-chunk chunk-section margin28'>
+        <view class='order-chunk-box chunk-section-main'>
+            <view class='order-head flex-wrap flex-align flex-side' bindtap='gotoOrderAll' data-state='0'>
+                <text class='order-head-l'>我的订单</text>
+                <view class='order-head-r'>
+                    查看全部订单
+                    <image class='order-head-more' src='../../images/more-btn.png'></image>
+                </view>
+            </view>
+            <view class='split-chunk'></view>
+            <view class='order-nav flex-wrap flex-align flex-justify'>
+                <view class='order-nav-i flex-con' bindtap='gotoOrderAll' data-state='2'>
+                    <view class='order-nav-pic'>
+                        <image class='order-nav-icon' src='../../images/person_icon1.png'></image>
+                        <view class='order-count-i' wx:if="{{personInfo.w_payment && personInfo.w_payment != 0}}">{{personInfo.w_payment}}</view>
+                    </view>
+                    <view class='order-nav-tit'>待支付</view>
+                </view>
+                <view class='order-nav-i flex-con' bindtap='gotoOrderAll' data-state='3'>
+                    <view class='order-nav-pic'>
+                        <image class='order-nav-icon' src='../../images/person_icon2.png'></image>
+                        <view class='order-count-i' wx:if="{{personInfo.w_pay && personInfo.w_pay != 0}}">{{personInfo.w_pay}}</view>
+                    </view>
+                    <view class='order-nav-tit'>已完成</view>
+                </view>
+                <view class='order-nav-i flex-con' bindtap='gotoOrderAll' data-state='1'>
+                    <view class='order-nav-pic'>
+                        <image class='order-nav-icon' src='../../images/person_icon3.png'></image>
+                        <view class='order-count-i' wx:if="{{personInfo.w_cancel && personInfo.w_cancel != 0}}">{{personInfo.w_cancel}}</view>
+                    </view>
+                    <view class='order-nav-tit'>已取消</view>
+                </view>
+            </view>
+        </view>
+    </view>
+    <!--功能列表  -->
+    <view class='opt-lists chunk-section'>
+        <view class='chunk-section-main'>
+            <view class='opt-item flex-wrap flex-align flex-side' catchtap='skipJifen'>
+                <view class='opt-i-l flex-wrap flex-align'>
+                    <image class='opt-item-icon' src='../../images/person_icon5.png'></image>
+                    <text class='opt-i-text'>我的积分</text>
+                </view>
+                <view class='opt-i-r'>
+                    <text class='mine-integral'>{{personInfo.integral}}积分</text>
+                    <image class='opt-item-more' src='../../images/more-btn.png'></image>
+                </view>
+            </view>
+            <view class='split-line'>
+                <view class='split-chunk'></view>
+            </view>
+           
+            <view class='opt-item flex-wrap flex-align flex-side' catchtap='skipAsset'>
+                <view class='opt-i-l flex-wrap flex-align'>
+                    <image class='opt-item-icon' src='../../images/person_icon7.png'></image>
+                    <text class='opt-i-text'>我的资产</text>
+                </view>
+                <view class='opt-i-r'>
+                    <image class='opt-item-more' src='../../images/more-btn.png'></image>
+                </view>
+            </view>
+            <view class='split-line'>
+                <view class='split-chunk'></view>
+            </view>
+
+            <view class='opt-item flex-wrap flex-align flex-side' catchtap='skipShare'>
+                <view class='opt-i-l flex-wrap flex-align'>
+                    <image class='opt-item-icon' src='../../images/share.png'></image>
+                    <text class='opt-i-text'>我的分享</text>
+                </view>
+                <view class='opt-i-r'>
+                    <image class='opt-item-more' src='../../images/more-btn.png'></image>
+                </view>
+            </view>
+            <view class='split-line'>
+                <view class='split-chunk'></view>
+            </view>
+
+            <view class='opt-item flex-wrap flex-align flex-side' catchtap='skipEquity'>
+                <view class='opt-i-l flex-wrap flex-align'>
+                    <image class='opt-item-icon' src='../../images/person_icon9.png'></image>
+                    <text class='opt-i-text'>专属权益</text>
+                </view>
+                <view class='opt-i-r'>
+                    <image class='opt-item-more' src='../../images/more-btn.png'></image>
+                </view>
+            </view>
+            <view class='split-line'>
+                <view class='split-chunk'></view>
+            </view>
+
+            <view class='opt-item flex-wrap flex-align flex-side' catchtap='skipAbout'>
+                <view class='opt-i-l flex-wrap flex-align'>
+                    <image class='opt-item-icon' src='../../images/person_icon6.png'></image>
+                    <text class='opt-i-text'>关于我们</text>
+                </view>
+                <view class='opt-i-r'>
+                    <image class='opt-item-more' src='../../images/more-btn.png'></image>
+                </view>
+            </view>
+            <view class='split-line'>
+                <view class='split-chunk'></view>
+            </view>
+            
+            <view class='opt-item flex-wrap flex-align flex-side' catchtap='skipOutlogin'>
+                <view class='opt-i-l flex-wrap flex-align'>
+                    <image class='opt-item-icon' src='../../images/person_icon8.png'></image>
+                    <text class='opt-i-text'>退出</text>
+                </view>
+                <view class='opt-i-r'>
+                    <image class='opt-item-more' src='../../images/more-btn.png'></image>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <!-- 弹出框 -->
+    <view wx:if="{{!isHidden && first_login == 1}}" class="modelHidden">  
+        <view class='modeCont'>
+            <view class='modecont-box'>
+                <view class='mode-top'>
+                    <view class='imgvip-box'>
+                        <image class='mode-vip-img' src='../../images/welcome_vip.png'></image>
+                    </view>
+                    <view class='mode-tit1'>恭喜您！</view>
+                    <view class='mode-tit2'>成为“金鼎管家中心”会员</view>
+                    <view class='mode-tit3'>请您关注金鼎公司公众号，为给您提供更多优质的服务；<text wx:if="{{yg_data.name}}"> 欢迎您咨询在线客服或致电您的专属管家"{{yg_data.name}}" 电话：{{yg_data.phone}}</text> 祝您顺利!</view>
+                </view>
+                <view class='mode-bottom' catchtap='modeConfirm'>
+                    知道了
+                </view>
+            </view>
+        </view>
+    </view>
+
+</view>
+<!-- 未授权box -->
+<view class='not-login-box' wx-if="{{!isGetInfo}}">
+    <view class='n-logo-box'>
+        <image src="../../images/logo.png" mode='aspectFit'></image>
+    </view>
+    <view class='n-login-btn'>
+        <button open-type='getUserInfo' hover-class='none' bindgetuserinfo='getUserInfo'>微信用户一键获取授权</button>
+    </view>
+</view>
+
+
+
+
+

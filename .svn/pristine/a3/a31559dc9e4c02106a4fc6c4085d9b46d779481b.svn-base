@@ -1,0 +1,9 @@
+{
+    "navigationBarTitleText": "澳洲金鼎积分商城",
+    "navigationBarBackgroundColor": "#000",
+    "navigationBarTextStyle": "white",
+    "navigationStyle": "custom",
+    "usingComponents": {
+         "search": "/components/Search/search"
+    }
+}

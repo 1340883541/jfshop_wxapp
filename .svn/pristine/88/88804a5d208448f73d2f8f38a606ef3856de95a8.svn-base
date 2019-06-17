@@ -1,0 +1,96 @@
+/* 弹框 */
+.alertmode{
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    position: fixed;
+    top: 0;
+    background: rgba(0,0,0,0.8);
+}
+.alertmode_body{
+    height: 735rpx;
+    margin-top:20%;   
+}
+.alertmode_bj{
+    width: 640rpx;
+    height:100%;
+    display:block;
+    margin-left:10px;
+    position: relative;
+}
+.alertmode_infobox{
+    width:514rpx;
+    height:660rpx;
+    position:absolute;
+    z-index:1;
+    top:20%;
+    left:114rpx;
+}
+.alertmode_info .alertmode_infotit{
+    text-align: left;
+    font-size: 46rpx;
+    background-image: -webkit-linear-gradient(right,rgb(204, 131, 68),rgb(122, 73, 47));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight:600;
+    padding-left:58rpx;
+}
+.alertmode_content{
+    text-align:center;
+    color:#875940;
+    font-size:28rpx;
+    margin: auto;
+}
+.alertmode_con_name{
+    padding-top:26rpx;
+    border-bottom: 1px solid #78482f;
+    line-height: 40rpx;
+    display: inline-block;
+    font-weight:400;
+    text-align: left;
+}
+.alertmode_con_time{
+    line-height: 30rpx;
+    font-size: 26rpx;
+    padding-top: 40rpx;
+}
+.alertmode_con_location, .alertmode_con_phone{
+    line-height: 30rpx;
+    font-size: 26rpx;
+    padding-top: 16rpx;
+}
+.alertmode_con_time::after, .alertmode_con_location::after{
+    content: "";
+    width: 36rpx;
+    height: 1px;
+    display: block;
+    background: #78482f;
+    margin: auto;
+    margin-top: 12rpx;
+}
+.alertmode_con_location{}
+.alertmode_btn{
+    width: 370rpx;
+    height: 86rpx;
+    border-radius: 86rpx;
+    color: #78482f;
+    font-size:30rpx;
+    font-weight: bold;
+    text-align: center;
+    line-height: 86rpx;
+    margin: auto;
+    background: -prefix-linear-gradient(left, rgb(219,178,146), rgb(248,222,195)); 
+    background: linear-gradient(to right, rgb(219,178,146), rgb(248,222,195));
+    margin-top: 100rpx;
+}
+.close_mode{
+    width: 100%;
+    height: 40rpx;
+}
+.close_mode image{
+    display: block;
+    margin: auto;
+    width: 40rpx;
+    height: 40rpx;
+    margin-top: 58rpx;
+}

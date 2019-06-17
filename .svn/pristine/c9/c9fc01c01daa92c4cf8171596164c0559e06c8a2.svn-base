@@ -1,0 +1,24 @@
+<view class="pay-pop-box {{isShowPay?'index':''}}">
+    <view class='pay-pop-bg' catchtap='waitPayFn'></view>
+    <view class='pay-pop-info {{isShowPay?"bottom":""}}'>
+        <view class='pay-way'>
+            <view class='pay-money'>合计支付积分：<text>{{payIntegral}}积分</text></view>
+            <view class='pay-money'>账户支付余额：<text>{{userIntegral}}积分</text></view>
+            <!-- <view class='pay-money_wait' catchtap='waitPayFn'>稍后支付</view> -->
+             <!-- <view class='pay-balance {{isUseIntegral?"":"gray"}}' catchtap='IntePayFn'><image src='../../images/p_list_i1.png' mode='aspectFit'></image>立即支付(<text class='sup-inte'>{{userIntegral}}积分</text>)</view>  -->
+        </view>
+    <!-- <view class='pay-wait' catchtap='waitPayFn'>稍后支付</view> -->
+    <!-- <view class='pay-wait' catchtap='waitPayFn'><image src='../../images/p_list_i1.png' mode='aspectFit'></image>立即支付(<text class='sup-inte'>{{userIntegral}}积分</text>)</view> -->
+    <!-- <view class='pay-wait'>
+            <view class='pay-balance {{isUseIntegral?"":"gray"}}' catchtap='IntePayFn'><image src='../../images/p_list_i1.png' mode='aspectFit'></image>立即支付(<text class='sup-inte'>{{userIntegral}}积分</text>)</view>
+        </view>-->
+        <view class="buy_pay">
+          <view class='pay_later'  catchtap='waitPayFn'>稍后支付</view>
+          <view class='pay_later payleter-zhenzhao' wx:if="{{ispaysh_zhezhao}}"></view>
+          <view class='pay-wait pay-balance {{isUseIntegral?"":"gray"}}' catchtap='IntePayFn'>确认订单</view>
+          <view class='pay-wait pay-w-zhezhao' wx:if="{{isintopay_zhezhao}}"></view>
+        </view>
+          
+
+    </view> 
+</view> 

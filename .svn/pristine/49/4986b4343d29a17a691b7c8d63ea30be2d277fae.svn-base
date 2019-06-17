@@ -1,0 +1,25 @@
+<!--pages/rule/rule.wxml-->
+<import src="../../wxParse/wxParse.wxml"/>
+<view class='container'>
+    <!-- 头部 -->
+    <view class='rule_top'>
+        <image class='rule_banner' src='../../images/rule_1.jpg'></image>
+        <view class='rule_info'>
+            <image class='rule_info_imgbj' src='../../images/rule_2.png'></image>
+            <view class='rule_info_msg'>
+                <view class='rule_p1' wx:if="{{username}}">姓名：{{username}}</view>
+                <view class='rule_p2' wx:if="{{vip_no}}">卡号：{{vip_no}}</view>
+                <view class='rule_p3'>
+                    <text wx:if="{{vip_title}}">会员等级：{{vip_title}}</text>
+                    <text style="margin-left:11%;" wx:if="{{integral}}">剩余积分：{{integral}}</text>
+                </view>
+            </view>
+        </view>
+    </view>
+    <!-- 积分规则明细 -->
+    <view class='rule_mx'>
+        <view class='rule_mx_box'>
+             <template is="wxParse" data="{{wxParseData: about.nodes}}" /> 
+        </view>
+    </view>
+</view>

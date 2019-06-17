@@ -1,0 +1,24 @@
+<view class="search-v">
+    <image src="../../images/search_black.png"></image>
+    <input type="text" confirm-type='search' bindconfirm="bindconfirm" placeholder="搜索商品" placeholder-class="search-place" value='{{ searTxt }}'></input>
+</view>
+
+<view class='search-box'>
+    <view class='search-tle'>
+        <view class='search-tle-txt'>最近搜索</view>
+        <image class='search-tle-dex' src="../../images/del.png" bindtap='delFunc'></image>
+    </view>
+    <view class='search-list-box'>
+        <view class='search-list' bindtap='searchTap' data-type='last' data-index='{{ index }}' wx:for='{{ last }}' wx:key='{{ index }}'>{{ item }}</view>
+    </view>
+</view>
+
+<view class='search-box'>
+    <view class='search-tle'>
+        <view class='search-tle-txt'>热门搜索</view>
+    </view>
+    <view class='search-list-box'>
+        <view class='search-list' bindtap='searchTap' data-type='hot' data-index='{{ index }}' wx:for='{{ hot }}' wx:key='{{ index }}'>{{ item }}</view>
+    </view>
+</view>
+

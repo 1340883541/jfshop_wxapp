@@ -1,0 +1,21 @@
+<view class='w-wrap'>
+    <!-- <button open-type="share">分享</button> -->
+    <!-- 公告列表  -->
+
+    <view class='notice-list' wx:for="{{ items }}" wx:if="{{items.length > 0}}" wx:key="{{ item.id }}">
+        <view class='nitice-list-title'>
+            <view class='notice-list-title-inner'>{{ item.c_time_str }}</view>
+        </view>
+        <view class='notice-list-info' bindtap='skipNoticeDetail' data-id='{{ item.id }}'>
+            <view class='notice-list-info-cap'>
+                
+                <view class='notice_title'><view class='adv-xinpbtn' wx:if="{{item.tag}}">{{item.tag}}</view>{{ item.title }}</view>
+                <view class='notice_msg elli-2'>{{ item.subtitle }}</view>
+            </view>
+            <view class='notice-list-info-img'>
+                <image src='{{ item.img }}' class='placeholder-icon'  mode="aspectFill" lazy-load='true'></image>
+            </view>
+        </view>
+    </view>
+     <empty is-empty-show="{{items.length <= 0}}" empty-txt="暂没有公告" ></empty> 
+</view>

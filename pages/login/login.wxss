@@ -1,0 +1,168 @@
+
+.verify-logo{
+    width: 100%;
+    height: 400rpx;
+    padding:62rpx 0;
+    overflow: hidden;
+}
+.verify-logo image{
+    display: block;
+    width: 200rpx;
+    height: 200rpx;
+    margin:0 auto;
+}
+.logo_tit{
+    font-size: 36rpx;
+    margin-top: 14rpx;
+    text-align: center;
+}
+.verify-page{
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+}
+.tips{
+    width: 100%;
+    height: auto;
+    color: #666666;
+    padding: 0 30rpx;
+    font-size: 28rpx;
+    line-height: 72rpx;
+    background: #F7F7F7;
+}
+
+.content{
+    width: 100%;
+    height: auto;
+    padding: 0 30rpx;
+}
+
+.list{
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 30rpx;
+    border-bottom: 1px solid #E9E9E9;
+}
+
+.list::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.list .txt{
+    float: left;
+    width: 130rpx;
+    height: auto;
+    color: #333333;
+    font-size: 32rpx;
+    line-height: 55rpx;
+}
+
+.list .input-place{
+    color: #CCCCCC;
+    font-size: 32rpx;
+}
+
+.list .phone{
+    float: left;
+    width: calc(100% - 130rpx);
+    height: auto;
+    padding: 0 30rpx;
+}
+
+.list .phone input{
+    width: 100%;
+    height: auto;
+    color: #333333;
+    font-size: 32rpx;
+    line-height: 55rpx;
+}
+
+.list .code-input{
+    float: left;
+    width: calc(100% - 300rpx);
+    height: auto;
+    padding: 0 30rpx;
+}
+
+.list .code-input input{
+    width: 100%;
+    height: auto;
+    color: #333333;
+    font-size: 32rpx;
+    line-height: 55rpx;
+}
+
+.list .code-btn{
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    min-width: 170rpx;
+    height: auto;
+    color: #366CFB;
+    font-size: 32rpx;
+    text-align: center;
+    line-height: 116rpx;
+    padding:0 20rpx;
+}
+
+.btn{
+    width: 100%;
+    height: auto;
+    color: #fff;
+    font-size: 32rpx;
+    margin-top: 86rpx;
+    text-align: center;
+    line-height: 80rpx;
+    background: #a88c5d;
+    border-radius: 40rpx;
+}
+
+.list .picker{
+    padding: 0 20rpx;
+    font-size: 32rpx;
+    color: #333333;
+    margin-left:10rpx;
+    height: 55rpx;
+    line-height: 55rpx;
+    float: left;
+    width:72%;
+}
+ .list-msg2{
+    padding: 0 10rpx;
+    align-items: center;
+    height: 55rpx;
+    line-height: 55rpx;
+}
+.list-msg2 image{
+    width: 40rpx;
+    height: 40rpx;
+    display: block;
+    position: absolute;
+    margin-right:20rpx;
+    right:0;
+}
+.rangeBox{
+  width:100%;
+  position: absolute;
+  bottom:0;
+  margin-bottom: 30rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.rangeBox .staff_login{
+  font-size: 32rpx;
+   color:#999;
+  margin-right:20rpx;
+  border-right: 1px solid #999;
+  line-height: 30rpx;
+  padding:0 20rpx 0 0;
+}
+.rangeBox .register{
+  font-size: 32rpx;
+  color:#999;
+}

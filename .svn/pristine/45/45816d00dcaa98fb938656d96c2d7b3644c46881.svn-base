@@ -1,0 +1,24 @@
+
+/* empty page components is wxss */
+.empty-box{
+    overflow: hidden;
+}
+.empty-box .empty-img{
+    width:263rpx;
+    height: 210rpx;
+    margin:260rpx auto 52rpx;
+}
+.empty-box .empty-img image{
+    display: block;
+    width:100%;
+    height: 100%;
+}
+.empty-box .empty-txt{
+    width:100%;
+    height: 30rpx;
+    font-size: 30rpx;
+    line-height: 30rpx;
+    margin-bottom: 100rpx;
+    color:#666666;
+    text-align: center;
+}

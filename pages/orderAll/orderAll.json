@@ -1,0 +1,9 @@
+{
+    "navigationBarBackgroundColor": "#000",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "全部订单",
+    "usingComponents": {
+        "emptyBox": "../../components/EmptyPage/EmptyPage",
+        "pay-popup":"../../components/PayPopup/PayPopup"
+    }
+}

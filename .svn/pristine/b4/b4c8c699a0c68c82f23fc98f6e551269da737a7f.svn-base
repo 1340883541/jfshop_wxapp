@@ -1,0 +1,16 @@
+<view class='w-wrap'>
+    <view class='order-goods'>
+        <view class='goods-info bor-1px-b' wx:for="{{inventoryLists}}" wx:key="{{item.id}}">
+            <view class='goods-left-img floatL'>
+                <image src='{{item.goods_img}}' class='placeholder-icon'  mode='aspectFill' lazy-load='true'></image>
+            </view>
+            <view class='goods-right-info floatL'>
+                <view class='goods-r-title elli-2'>{{item.name}}</view>
+                <view class='goods-r-desc elli'>{{item.sku_val_str}}</view>
+                <view class='goods-r-price' wx:if="{{item.price_y != 0}}">{{item.price_y}} 积分</view>
+                <view class='goods-r-price' wx:if="{{item.price_y == 0}}">免费</view>
+                <view class='goods-number'>x{{item.goods_number}}</view>
+            </view>
+        </view>
+    </view>
+</view>

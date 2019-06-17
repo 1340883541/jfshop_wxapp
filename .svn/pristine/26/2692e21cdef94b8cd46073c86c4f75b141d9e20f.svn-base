@@ -1,0 +1,9 @@
+{
+    "navigationBarTitleText": "购物车",
+    "navigationBarBackgroundColor": "#000",
+    "navigationBarTextStyle": "white",
+    "disableScroll":false,
+    "usingComponents":{
+        "toast":"../../components/Toast/Toast"
+    }
+}

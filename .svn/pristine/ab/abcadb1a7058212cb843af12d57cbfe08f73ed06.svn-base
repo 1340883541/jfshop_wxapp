@@ -1,0 +1,512 @@
+/* pages/goodDetail/goodDetail.wxss */
+.container{
+    width: 100%;
+    height: auto;
+    padding-bottom: 110rpx;
+}
+
+.split-chunk {
+    width: 100%;
+    height: 30rpx;
+    background: #f8f8f8;
+    border-top: 1px solid #f8f8f8;
+    border-bottom: 1px solid #f8f8f8;
+}
+
+.good-swiper {
+    margin-bottom: 16rpx;
+}
+
+.good-swiper .wx-swiper-dot {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.good-swiper .wx-swiper-dot-active {
+    background: #fff;
+}
+
+.good-info {
+    padding: 0 30rpx;
+}
+
+.good-title {
+    color: #333333;
+    font-size: 32rpx;
+    line-height: 50rpx;
+    margin-bottom: 12rpx;
+}
+.good-msgtitle{
+    color: #333333;
+    font-size: 30rpx;
+    line-height: 50rpx;
+    margin-bottom: 12rpx;
+}
+.good-price {
+    margin-bottom: 16rpx;
+}
+.jifen_y{
+    font-size: 28rpx;
+}
+.good-curprice {
+    margin-right: 16rpx;
+    font-size: 36rpx;
+    color: #ff220b;
+}
+
+.good-oriprice {
+    color: #999999;
+    font-size: 24rpx;
+    text-decoration: line-through;
+}
+.scale-list-box{
+  margin-left:30rpx;
+}
+
+
+/*规格css  */
+.scale{
+    width: 100%;
+    height: auto;
+    padding: 0 30rpx;
+}
+
+.selected-scale {
+    width: 100%;
+    height: 116rpx;
+}
+
+.has-scale-text {
+    color: #333333;
+    font-size: 32rpx;
+}
+
+.scale-dot {
+    width: 26rpx;
+    height: 15rpx;
+}
+
+.scale-detail-box{
+    width: 100%;
+    height: auto;
+    padding-bottom: 30rpx;
+    border-top: 1px solid #EEEEEE;
+}
+
+.scale-list{
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+
+.scale-list::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.scale-list .scale-list-txt{
+    float: left;
+    color: #999999;
+    font-size: 26rpx;
+    margin-top: 28rpx;
+    line-height: 60rpx;
+}
+
+.scale-list .scale-list-btn{
+    float: left;
+    color: #333333;
+    font-size: 26rpx;
+    margin-top: 28rpx;
+    margin-left: 30rpx;
+    line-height: 60rpx;
+    background: #F5F5F5;
+    border-radius: 60rpx;
+    position: relative;
+}
+
+/* .scale-list-btn:nth-of-type(3n+1){
+    margin-left: 76rpx;
+} */
+.scale-list-btn:first-child{
+    margin-left: 30rpx !important;
+}
+.scale-list .scale-list-btn view{
+    padding: 0 26rpx;
+}
+
+.active-scale-list-btn{
+    color: #ffffff !important;
+    background: #a88c5d !important;
+}
+
+.cover-scale-list-btn::before{
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 60rpx;
+    background: rgba(255, 255, 255, 0.6);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+}
+
+.scale-list-num{
+    float: left;
+    margin-top: 30rpx;
+    margin-left: 30rpx;
+    background: #F9F9F9;
+}
+
+.scale-list-num::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.scale-list-num view, .scale-list-num .list-num-num{
+    float: left;
+    width: 60rpx;
+    height: 60rpx;
+    font-size: 35rpx;
+    text-align: center;
+    line-height: 60rpx;
+}
+
+.scale-list-num .list-num-unclick{
+    color: #CBCBCB !important;
+}
+
+.scale-list-num .list-num-click{
+    color: #666666;
+}
+
+.scale-list-surplus{
+    float: right;
+    color: #999999;
+    font-size: 26rpx;
+    margin-top: 28rpx;
+    line-height: 60rpx;
+}
+
+.scale-list-surplus text{
+    color: #333333;
+}
+
+/*评价css  */
+.comment-top {
+    padding: 0 30rpx;
+    height: 92rpx;
+}
+
+.comment-top-text {
+    color: #333333;
+    font-size: 32rpx;
+}
+
+.comment-per {
+    color: #999999;
+    font-size: 28rpx;
+}
+
+.comment-pic-top {
+    margin-bottom: 24rpx;
+    padding: 0 30rpx;
+}
+
+.comment-pic-p {
+    margin-right: 10rpx;
+    width: 56rpx;
+    height: 56rpx;
+}
+
+.comment-name {
+    color: #333333;
+    font-size: 30rpx;
+}
+
+.comment-pic-r {
+    color: #999999;
+    font-size: 24rpx;
+}
+
+.star {
+    margin-bottom: 20rpx;
+    padding-left: 30rpx;
+}
+
+.star-item {
+    margin-right: 16rpx;
+    width: 25rpx;
+    height: 24rpx;
+}
+
+.comment-text {
+    margin-bottom: 18px;
+    padding: 0 30rpx;
+    font-size: 30rpx;
+    color: #333333;
+    line-height: 46rpx;
+}
+/* ---------------------- */
+.comment-swiper{
+    width: 100%;
+    height: auto;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    padding-left: 30rpx;
+    margin-bottom: 28rpx;
+}
+
+.comment-swiper-i{
+    width: 100%;
+    height: auto;
+}
+
+.comment-swiper-i::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.comment-swiper-i image{
+    display: block;
+    float: left;
+    width: 222rpx;
+    height: 222rpx;
+    margin-left: 12rpx;
+}
+
+.comment-swiper-i image:first-child{
+    margin-left: 0;
+}
+/* ----------------------- */
+
+.comment-goodScale {
+    margin-bottom: 50rpx;
+    padding: 0 30rpx;
+    font-size: 24rpx; 
+    color: #999;
+}
+
+.lookAll-comment {
+    margin-bottom: 26px;
+    text-align: center;
+}
+
+.lookAll-btn {
+    padding: 10px 20px;
+    font-size: 28rpx;
+    color: #999;
+    border: 1px solid #ccc;
+    border-radius: 84rpx;
+}
+
+/*商品详情  */
+.good-detail-main{
+    width: 100%;
+    height: auto;
+}
+.good-detail-main .wxParse-inline{
+    padding:0 30rpx;
+}
+.good-detail-main view{
+    word-wrap: break-word;
+}
+
+.good-detail-top {
+    padding: 0 30rpx;
+    height: 92rpx;
+    line-height: 92rpx;
+}
+
+.good-detail-text {
+    color: #333;
+    font-size: 32rpx;
+    font-weight: bold;
+}
+
+/*底部按钮  */
+.btn-bottom{
+    width: 100%;
+    height: auto;
+    background: #ffffff;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 9999;
+    padding-right: 16rpx;
+}
+
+.col-btn {
+    padding-top: 14rpx;
+    width: 138rpx;
+    height: 110rpx;
+    text-align: center;
+    background: #fff;
+}
+
+.col-btn-icon1 {
+    width: 40rpx;
+    height: 36rpx;
+}
+
+.col-btn-icon2 {
+    width: 45rpx;
+    height: 41rpx;
+}
+
+.col-btn-text {
+    font-size: 23rpx;
+    color: #666;
+}
+
+.click-btn-box{
+    width: calc(100% - 280rpx);
+    height: auto;
+    padding: 15rpx 0rpx 15rpx 0;
+    position: relative;
+}
+
+.click-btn-box::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.click-btn-cover{
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9;
+}
+
+.click-btn {
+    float: left;
+    width: 50%;
+    height: auto;
+    font-size: 28rpx;
+    text-align: center;
+    line-height: 80rpx;
+}
+
+.add-cart {
+    background: #484848;
+    color: #fff;
+    border-top-left-radius: 80rpx;
+    border-bottom-left-radius: 80rpx;
+}
+.add-cart-tag{
+   background: #ccc;
+    color: #fff;
+    border-top-left-radius: 80rpx;
+    border-bottom-left-radius: 80rpx;
+    border-top-right-radius: 10rpx;
+    border-bottom-right-radius: 10rpx;
+
+}
+
+.now-buy {
+    background: #a88c5d;
+    color: #fff;
+    border-top-right-radius: 80rpx;
+    border-bottom-right-radius: 80rpx;
+    border-top-left-radius:10rpx;
+    border-bottom-left-radius: 10rpx;
+}
+
+.col-icon-t {
+    position: relative;
+    display: inline-block;
+}
+
+.cart-count {
+    position: absolute;
+    top: -12rpx;
+    right: -22rpx;
+    z-index: 10;
+    width: 30rpx;
+    height: 30rpx;
+    line-height: 30rpx;
+    border-radius: 180rpx;
+    background: #ff220b;
+    color: #fff;
+    font-size: 18rpx;
+    text-align: center;
+}
+
+.add-goods-one{
+    width: 30rpx;
+    height: auto;
+    color: #ffffff;
+    font-size: 18rpx;
+    text-align: center;
+    line-height: 30rpx;
+    background: rgba(255, 34, 11, 1);
+    border-radius: 50%;
+    position: absolute;
+    top: -12rpx;
+    right: -22rpx;
+    z-index: 9;
+}
+
+.add-goods-one-move{
+    transition: all 0.4s;
+    top: -70rpx;
+    background: rgba(255, 34, 11, 0.8);
+}
+
+/*点击图片放大css效果  */
+
+.big-pic {
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+/* 商品失效 */
+.goods-lost-cover{
+    width: 100%;
+    height: calc(100vh - 110rpx);
+    background: rgba(255, 255, 255, 0.3);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+.goods-lost-txt{
+    width: 100%;
+    height: auto;
+    color: #ffffff;
+    font-size: 32rpx;
+    text-align: center;
+    line-height: 110rpx;
+    background: rgba(51, 51, 51, 0.7);
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 9;
+}
+
+
+/* 客服 */
+.pos{
+  position: absolute;
+  /* top: 10px; */
+  /* left: 23px; */
+  opacity: 0;
+}
+.icon_kf{
+  width: 22px;
+  height:20px;
+  display: inline-block;
+}

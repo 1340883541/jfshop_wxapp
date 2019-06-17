@@ -1,0 +1,72 @@
+{
+  "pages": [
+    "pages/verifyPhone/verifyPhone",
+    "pages/index/index",
+    "pages/good/good",
+    "pages/cart/cart",
+    "pages/person/person",
+    "pages/goodDetail/goodDetail",
+    "pages/noticeList/noticeList",
+    "pages/noticeDetail/noticeDetail",
+    "pages/fillOrder/fillOrder",
+    "pages/search/search",
+    "pages/goodsInventory/goodsInventory",
+    "pages/jifList/jifList",
+    "pages/orderDetail/orderDetail",
+    "pages/orderAll/orderAll",
+    "pages/nowBuy/nowBuy",
+    "pages/webpage/webpage",
+    "pages/about/about",
+    "pages/paySuc/paySuc",
+    "pages/active/active",
+    "pages/asset/asset",
+    "pages/assetDetail/assetDetail",
+    "pages/register/register",
+    "pages/share/share",
+    "pages/login/login"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#000",
+    "navigationBarTitleText": "澳洲金鼎积分商城",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#000",
+    "backgroundColor": "#fff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "./images/f_icon0.png",
+        "selectedIconPath": "./images/fact_icon0.png"
+      },
+      {
+        "pagePath": "pages/good/good",
+        "text": "商品",
+        "iconPath": "./images/f_icon1.png",
+        "selectedIconPath": "./images/fact_icon1.png"
+      },
+      {
+        "pagePath": "pages/cart/cart",
+        "text": "购物车",
+        "iconPath": "./images/f_icon2.png",
+        "selectedIconPath": "./images/fact_icon2.png"
+      },
+      {
+        "pagePath": "pages/person/person",
+        "text": "我的",
+        "iconPath": "./images/f_icon3.png",
+        "selectedIconPath": "./images/fact_icon3.png"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 20000,
+    "connectSocket": 20000,
+    "uploadFile": 20000,
+    "downloadFile": 20000
+  }
+}

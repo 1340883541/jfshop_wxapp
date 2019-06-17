@@ -1,0 +1,126 @@
+<view class='content'>
+    <view class='list' wx:if="{{items && items.length > 0}}" wx:for='{{ items }}' wx:key='{{ item.id }}'>
+        <!-- 已取消 -->
+        <view class='tle' wx:if='{{ item.new_status == 0 }}'>
+            <view class='tle-l-txt'>收货信息 <text class='name-txt'>{{item.usename}}</text> {{item.phone}}</view>
+            <image class='tle-r-img' src='../../images/delete_icon.png' bindtap='celNdel' data-type='2' data-id='{{ item.id }}'></image>
+            <view class='tle-r-txt col333'>已取消</view>
+        </view>
+        <!-- 待支付 -->
+        <view class='tle' wx:if='{{ item.new_status == 1 }}'>
+            <view class='tle-l-txt'>收货信息 <text class='name-txt'>{{item.usename}}</text> {{item.phone}}</view>
+            <view class='tle-r-txt colff4'>待支付</view>
+        </view>
+        <!-- 待确定 -->
+        <view class='tle' wx:if='{{ item.new_status == 3 }}'>
+            <view class='tle-l-txt'>收货信息 <text class='name-txt'>{{item.usename}}</text> {{item.phone}}</view>
+            <view class='tle-r-txt colff4'>待确定</view>
+        </view>
+        <!-- 已完成 -->
+        <view class='tle' wx:if='{{ item.new_status == 2 && item.is_service == 0 }}'>
+            <view class='tle-l-txt'>收货信息 <text class='name-txt'>{{item.usename}}</text> {{item.phone}}</view>
+            <image class='tle-r-img' src='../../images/delete_icon.png' bindtap='celNdel' data-type='2' data-id='{{ item.id }}'></image>
+            <view class='tle-r-txt col333'>已完成</view>
+        </view>
+        <!-- 已支付 -->
+        <view class='tle' wx:if='{{ item.new_status == 2 && item.is_service == 1 }}'>
+            <view class='tle-l-txt'>收货信息 <text class='name-txt'>{{item.usename}}</text> {{item.phone}}</view>
+            <image class='tle-r-img' src='../../images/delete_icon.png' bindtap='celNdel' data-type='2' data-id='{{ item.id }}'></image>
+            <view class='tle-r-txt col333'>已支付</view>
+        </view>
+        
+        <view bindtap='skipOrderDetail' data-id='{{ item.id }}'>
+            <!-- 一个订单多个商品 -->
+            <view class='order-img-box' wx:if='{{ item.goods.length > 1 }}'>
+                <scroll-view class='order-img' scroll-x='true'>
+                    <image src='{{ ite.pic }}' class='placeholder-icon' lazy-load mode='aspectFill'  wx:for='{{ item.goods }}' wx:key='{{ ite.id }}' wx:for-item='ite'></image>
+                </scroll-view>
+            </view>
+            <!-- 一个订单单个商品 -->
+            <view class='order' wx:else>
+                <image src='{{ item.goods[0].pic }}' class='placeholder-icon' mode='aspectFill' lazy-load></image>
+                <view class='order-info-box'>
+                    <view class='order-info-tle'>{{ item.goods[0].goods_name }}</view>
+                    <view class='order-info'>{{ item.goods[0].goods_sku }}</view>
+                </view>
+            </view>
+        </view>            
+
+        <view class='pay bor-1px-b'>共<text class='num'>{{ item.count }}</text>项商品 实付积分:<text class='price'>{{ item.order_price }}积分</text></view>
+
+        <view class='btn-box'>
+            <view class='btn-other' wx:if='{{ item.new_status == 0 || item.new_status == 2 }}' bindtap='orderMore' data-id='{{ item.id }}'>再来一单</view>
+            <view class='btn-other buy-o-zhezhao' wx:if="{{isbuy_order_zhezBtn || item.new_status == 3}}"></view>
+            <view class='btn-other' wx:if='{{ item.new_status == 2 && item.is_service == 0 }}' bindtap='lookWuliu' data-id='{{ item.id }}'>物流查询</view>
+            <view class='btn-other' wx:if='{{ item.new_status == 2 && item.is_service == 1 }}' bindtap='lookOrderStatus' data-id='{{ item.id }}' data-verify='{{ item.is_verify }}' data-complete='{{ item.is_complete }}'>订单状态</view>
+            <view class='btn-pay' wx:if='{{ item.new_status == 1 }}' catchtap='gotoPay' data-id="{{item.id}}">去支付</view>
+            <view class='btn-pay ' wx:if='{{ item.new_status == 3 }}'  data-id="{{item.id}}">去支付</view>
+
+            <view class='btn-pay gobuy-zhezhao' wx:if="{{isbuy_zhezBtn}}"></view>
+            <view class='btn-other' wx:if='{{ item.new_status == 1 }}' bindtap='celNdel' data-type='1' data-id='{{ item.id }}' data-index='{{ index }}'>取消</view>
+            <view class='btn-other' wx:if='{{ item.new_status == 3 }}' bindtap='celNdel' data-type='1' data-id='{{ item.id }}' data-index='{{ index }}'>取消</view>
+        </view>
+    </view>
+
+    <!-- 支付弹框组件 -->
+    <pay-popup is-show-pay="{{isShowPay}}" pay-integral="{{payMoney}}" user-integral="{{userIntegral || 0}}" is-use-integral="{{isUseIntegral}}" bindhide="hidePayFn"  bindpaysuc="paySucFn"></pay-popup> 
+    <!-- 加载更多 -->
+    <view class='z-no-more' wx:if="{{ items.length > 0 }}">{{ page < totalPage ? '加载更多' : '没有更多' }}</view>
+    <emptyBox is-empty-show="{{ items.length == 0 }}" empty-txt="目前没有订单"></emptyBox> 
+
+    <!-- 物流查询弹框 -->
+    <view class='wuliu_model' wx:if="{{isWuliu}}" bindtap='closeWuliu'>
+        <view class='wuliu_body'>
+            <view class='wuliu_title'>物流进度展示</view>
+            <view class='wuliu_close' bindtap='closeWuliu'><image src='../../images/close_canvas.png'></image></view>
+            <view class='wuliu_info'>
+                <view class='wuliu_item' wx:if="{{wuliuList != ''}}" wx:for="{{wuliuList}}" wx:key='{{ item.id }}'>
+                    <text class='wuliu_msg elli-2'>{{item.remark}}</text>
+                    <text class='wuliu_time'>{{item.c_time}}</text>
+                </view>
+                <view class='no_wuliu' wx:if="{{wuliuList == ''}}">
+                    无物流信息
+                </view>
+            </view>
+        </view>
+    </view>
+    <!-- 订单状态弹框 -->
+    <view class='wuliu_model' wx:if="{{showOrderStatus}}" >
+        <view class='wuliu_body orderstatus-body'>
+        <form bindsubmit="orderStatusSubmit">
+            <view class='wuliu_title'>订单信息状态</view>
+            <view class='orderstatus_info' style='border-left:0;'>
+                <view class='radiao-list'>
+                    <view class='radio-tit1'>订单信息是否核实</view>
+                    <radio-group class="radio-group"  name="isVerify" bindchange="radioChange">
+                        <label class="radio">
+                            <radio  color="#a88c5d" value="2" checked='{{verifyChecked == 2 ? true : false}}' disabled="{{verifyChecked == 1 ? 'disabled' : ''}}"/>
+                            否
+                        </label>
+                        <label class="radio"  catchtap='radioDis1Fn'>
+                            <radio  color="#a88c5d" value="1" checked='{{verifyChecked == 1 ? true : false}}'/>
+                            是
+                        </label>
+                    </radio-group>
+                    <view class='radio-tit1'>服务是否完成</view>
+                    <radio-group class="radio-group" name="isComplete" bindchange="radioChange">
+                        <label class="radio">
+                            <radio  color="#a88c5d" value="2"  checked='{{completeChecked == 2 ? true : false}}' disabled="{{completeChecked == 1 ? 'disabled' : ''}}"/>
+                            否
+                        </label>
+                        <label class="radio"  catchtap='radioDis2Fn'>
+                            <radio  color="#a88c5d" value="1" checked='{{completeChecked == 1 ? true : false}}'/>
+                            是
+                        </label>
+                    </radio-group>
+                </view>
+            </view>
+            <view class='orderstatus-btn-box'>
+                <button class='order-save' form-type="submit">保存</button>
+                <view class='order-quxiao' bindtap='closeOrderStatus'>取消</view>
+            </view> 
+        </form>
+            
+        </view>
+    </view>
+</view>

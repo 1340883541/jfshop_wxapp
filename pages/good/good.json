@@ -1,0 +1,11 @@
+{
+    
+    "navigationBarTitleText": "商品",
+    "navigationBarBackgroundColor": "#000",
+    "navigationBarTextStyle": "white",
+    "usingComponents": {
+        "search": "/components/Search/search",
+        "empty": "../../components/EmptyPage/EmptyPage"
+    },
+    "enablePullDownRefresh": true
+}

@@ -1,0 +1,5 @@
+<view class='{{isMask?"toast-mask":""}}'>
+    <view class='toast {{relative}} {{isShowToast?"opacity-1":""}}'>
+        {{errTxt}}
+    </view>
+</view>

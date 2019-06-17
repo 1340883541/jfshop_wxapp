@@ -1,0 +1,87 @@
+.search-v{
+    width: 100%;
+    height: auto;
+    padding: 30rpx;
+    position: relative;
+}
+
+.search-v image{
+    display: block;
+    width: 24rpx;
+    height: 24rpx;
+    position: absolute;
+    top: 54rpx;
+    left: 60rpx;
+    z-index: 2;
+}
+
+.search-v input{
+    display: block;
+    width: 100%;
+    height: 72rpx;
+    color: #333333;
+    font-size: 28rpx;
+    padding-left: 64rpx;
+    padding-right: 30rpx;
+    border-radius: 36rpx;
+    border: 1px solid #dcdcdc;
+}
+
+.search-place{
+    color: #666666;
+    font-size: 28rpx;
+}
+
+.search-box{
+    width: 100%;
+    height: auto;
+    padding-left: 30rpx;
+}
+
+.search-tle{
+    width: 100%;
+    height: auto;
+    padding-top: 30rpx;
+    padding-right: 30rpx;
+}
+
+.search-tle::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.search-tle-txt{
+    float: left;
+    color: #666666;
+    font-size: 28rpx;
+}
+
+.search-tle-dex{
+    float: right;
+    width: 29rpx;
+    height: 30rpx;
+    margin-top: 5rpx;
+}
+
+.search-list-box{
+    width: 100%;
+    height: auto;
+}
+
+.search-list-box::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.search-list{
+    float: left;
+    color: #333333;
+    font-size: 28rpx;
+    margin-top: 30rpx;
+    margin-right: 30rpx;
+    background: #F5F5F5;
+    padding: 12rpx 30rpx;
+    border-radius: 32rpx;
+}

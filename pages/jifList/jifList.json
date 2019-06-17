@@ -1,0 +1,10 @@
+{
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#000",
+    "navigationBarTitleText": "积分明细",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f7f7f7",
+    "usingComponents": {
+        "empty": "../../components/EmptyPage/EmptyPage"
+    }
+}

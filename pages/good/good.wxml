@@ -1,0 +1,108 @@
+<!--pages/good/good.wxml-->
+<view class="container" style='height:100%;'>
+    <scroll-view scroll-top="{{ scrollTop }}"  bindscrolltolower="pageRenderFunc" bindscroll="topFunc" bindscrolltoupper="refreshFun"   scroll-y="{{isnav?false:true}}">
+        <view class='top-bar w100 clearfix {{ hideSearch ? "fixed_box" : "" }}' id='the-id'>
+            <view class='clearfix search-component w100 {{ hideSearch ? "hide-search" : "" }}'>
+                <view class='search-v'>
+                    <search text="{{ searTxt }}" textColor="#888" iconUrl="../../images/search_black.png" bindmyevent='myevent' bindtap="gotoSearch"></search>
+                </view>
+            </view>
+            <!--分隔图  -->
+            <view class='fenge_img {{ hideSearch ? "hide-display" : "" }}'><image src='../../images/good-banner-pic.jpg'></image></view>
+            <view class='filter-nav'>
+                <!--筛选导航  -->
+                <view class='filter-nav-bar clearfix'>
+                    <block wx:for="{{filterData}}" wx:key="{{key}}">
+                        <view class='filter-item {{item.class}}' data-way="{{item.sortWay}}" id='{{item.index}}' data-ntype='{{ item.typeN }}' catchtap="switchTab">
+                            <view class='filter-v'>
+                                <text class='filter-text'>{{item.text}}</text>
+                                <view class='filter-icon'>
+                                    <icon class='icon1' wx:if="{{item.index != 0}}"></icon>
+                                    <icon class="icon2 {{item.index == 0 ? 'top4':''}}"></icon>
+                                </view>
+                            </view>
+                        </view>
+                    </block>
+                    <view class='search-icon-v filter-item '>
+                        <image src="../../images/list-switch3.png" bindtap='switchListIcon' wx:if='{{ !listIcon }}'></image>
+                        <image src="../../images/list-switch2.png" bindtap='switchListIcon' wx:else></image>
+                    </view>
+                    
+                </view>
+                <!--筛选的下拉框  -->
+                <view class="nav_boxs hide{{isnav?'show':''}}">
+                    <view class='nav-list'>
+                        <view class="nav-item {{isclsIndex === '' ? 'nav-active' : ''}} flex-wrap flex-align flex-justify-start" data-id='' data-index='' data-name='全部' catchtap='claListFunc'>
+                            <text class="flex-wrap flex-align flex-justify-start">全部</text>
+                            <i class="nav_gouxuan {{isclsIndex === '' ? 'show' : ''}}"></i>
+                        </view>
+                        <view class="nav-item {{isclsIndex === index ? 'nav-active' : ''}} flex-wrap flex-align flex-justify-start" catchtap='claListFunc' data-id='{{ item.id }}' data-index='{{ index }}' data-name='{{ item.name }}' wx:for="{{good_class}}" wx:for-item="item" wx:key="{{ item.id }}" wx:for-index="index">
+                            <text class="flex-wrap flex-align flex-justify-start">{{item.name}}</text>
+                            <i class="nav_gouxuan {{isclsIndex === index ? 'show' : ''}}"></i>
+                        </view>
+                    </view>
+                    <view class='nav-box-zhezhao' bindtouchstart="opennav"></view>
+                </view>
+            </view>
+        </view>
+        <!--滑动商品列表导航栏悬浮-备份 <view class='goods-lists' hidden='{{ items.length == 0 }}' bindtouchstart='touchStarFunc' bindtouchmove='touchMoveFunc'> -->
+        <view class='goods-lists' hidden='{{ items.length == 0 }}'>
+            <!-- 图标模式排列 -->
+            <view class='good-lists good-listsone' hidden='{{ listIcon }}'>
+                <view class='good-item' catchtap='goToDetail' id='{{ item.id }}' wx:for='{{ items }}' wx:key='{{ item.id }}'>
+                    <view class='good-square bor-1px'>
+                        <view class='good-pic-s placeholder-icon'>
+                            <image src='{{ item.goods_img }}' mode='aspectFill' lazy-load></image>
+                            <!-- <view class='good-vol'>销量:{{ item.sales }}</view> -->
+                        </view>
+                        <view class='good-price-s'>
+                            <view class='good-cur-price elipse'>{{item.name}}</view>
+                        </view>
+                        <view class='good-price-s'>
+                                <view class='youhui_buybtn' wx:if="{{item.is_temp == 1 && item.price_y != 100 && item.price_y!=0}}">{{ item.price_dis }} 积分</view>    
+                                <view class='youhui_buybtn' wx:elif="{{item.is_temp == 1 && item.price_y == 100}}">在线预约</view>
+                                <view class='youhui_buybtn' wx:elif="{{item.is_temp == 1 && item.price_y==0}}">免费咨询</view>
+                                <view class='youhui_buybtn' wx:elif="{{item.is_temp == 2 && item.price_y==0}}">免费</view>
+                                <view class='youhui_buybtn' wx:elif="{{item.is_temp == 2 && item.price_y!=0}}">{{ item.price_dis }} 积分</view>
+                                <text class='jifen_y' wx:elif="{{item.price_y != item.price_dis}}">{{item.price_y}} 积分</text>
+
+                            <!-- <view class='youhui_buybtn' wx:if="{{item.price_dis!=0}}">{{ item.price_dis }}积分</view> 
+                            <view class='youhui_buybtn' wx:if="{{item.price_dis==0}}">免费</view> 
+                            <view class='jifen_y' wx:if="{{item.price_y != item.price_dis}}">{{item.price_y}} 积分</view> -->
+                        </view>
+                        <text class='good-title-s elli-2'>{{ item.long_title }}</text>
+                        
+                        <view class='que-btn' wx:if="{{ item.no_stock == 2}}">缺货</view>
+                    </view>
+                </view>
+            </view>
+
+            <!-- 列表模式 -->
+            <view class="icon-box" hidden='{{ !listIcon }}'>
+                <view class="icon-list" catchtap='goToDetail' id='{{ item.id }}' wx:for='{{ items }}' wx:key='{{ item.id }}'>
+                    <view class='placeholder-icon list-box-img'>
+                        <image class="icon-img" src="{{ item.goods_img }}" mode='aspectFill' lazy-load></image>
+                    </view>
+                    <view class="icon-detail">
+                        <view class="icon-detail-tle elipse">{{ item.name }}</view>
+                        <view class="icon-detail-tle elli-2">{{ item.long_title }}</view>                        
+                        <view class="icon-detail-price">
+                            <text class='icon-cur-price'>{{ item.price_dis }}积分</text>
+                            <text class='icon-cur-price jifen_y' wx:if="{{ item.price_y != item.price_dis}}">{{ item.price_y }}积分</text>
+                            <!-- <view class='lists_buybtn'>BUY<i class="youjian">＞</i></view>    -->
+                            <!-- <view class='lists_buybtn'><image src='../../images/buy_btn.jpg'></image></view>  -->
+                            <!-- <view class='que-btn fr' wx:if="{{ item.no_stock == 2}}">缺货</view> -->
+                        </view>
+                        <!-- <view class='icon-vol'>销量:{{ item.sales }}</view> -->
+                    </view>
+                    <view class='que-list-btn' wx:if="{{ item.no_stock == 2}}">缺货</view>
+                </view>
+            </view>
+        </view>
+
+        <view class='z-no-more'>{{ page < totalPage ? '加载更多' : '没有更多' }}</view>
+        
+        <!-- 空数据 -->
+        <empty is-empty-show='{{ items.length == 0 }}' empty-txt='暂无商品'></empty>
+    </scroll-view>
+</view>

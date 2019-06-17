@@ -1,0 +1,62 @@
+<view class="w-wrap">
+<form bindsubmit="submit" report-submit='true'>
+    <view class='order-place'></view>
+    <!-- 商品信息,订单留言 -->
+    <view class='order-goods'>
+        <!-- 单间商品的显示 -->
+        <view class='goods-info bor-1px-b' wx:if="{{goods}}">
+            <view class='goods-left-img floatL'>
+                <image src='{{goods.goods_img}}' class='placeholder-icon'  mode='aspectFill' lazy-load='true'></image>
+            </view>
+            <view class='goods-right-info floatL'>
+                <view class='goods-r-title elli-2'>{{goods.name}}</view>
+                <view class='goods-r-desc elli'>{{goods.goods_sub[0].sku_val_str}}</view>
+                <!-- <view class='goods-r-price'>{{goods.price_y}}</view> -->
+                <view class='goods-r-price' wx:if="{{goods.price_y!=0}}">{{goods.price_y}}</view>
+                <view class='goods-r-price' wx:if="{{goods.price_y==0}}">免费</view>
+                <view class='goods-number'>x{{goodsNumber}}</view>
+            </view>
+        </view> 
+        <!-- 订单留言 -->
+        <view class='order-msg clear'>
+            <view class='fl order-msg-cap'>订单留言:</view>
+            <view class='fl order-msg-textarea {{isIos?"":"android-txt"}}'>
+                <textarea placeholder-class='order-msg-textarea-place' class="{{isShowJifBox || isShowFd || isShowPay?'hidden':'show'}}" placeholder="选填：订单留言（45字以内）" auto-height maxlength="45" bindinput='getTextareaVal'></textarea>
+            </view>
+        </view>
+    </view>
+    <!-- 剩余积分 -->
+    <view class='order-place'></view>
+    <view class='order-prices'>
+        <view class='order-prices-list clear'>
+            <view class='fl left'>剩余积分</view>
+            <view class='fr right'>{{userIntegral}} 积分</view>
+        </view>
+    </view>
+    <!-- 商品的总共价格 -->
+    <!-- <view class='price-place'></view> -->
+    <view class='order-place'></view>
+    <view class='order-prices'>
+        <view class='order-prices-list clear'>
+            <view class='fl left'>商品积分</view>
+            <view class='fr right'>{{totalMoney}} 积分</view>
+            <!-- <view class='fr right' wx:if="{{totalMoney!=0}}">{{totalMoney}} 积分</view>
+            <view class='fr right' wx:if="{{totalMoney==0}}">免费</view> -->
+        </view>
+    </view>
+    <!-- 商品的底部按钮，结算 -->
+    <view class='order-foot-info'>
+        <view class='fr'>
+            <view class='order-foot-txt fl'>实付积分： <text >{{totalPayMoney}} 积分</text></view>
+            <!-- <view class='order-foot-txt fl' wx:if="{{totalPayMoney != 0}}">实付积分： <text >{{totalPayMoney}} 积分</text></view>
+            <view class='order-foot-txt fl' wx:if="{{totalPayMoney == 0}}">实付积分： <text >免费</text></view> -->
+            <button class='order-foot-btn fl' wx:if="{{tag!=1}}" form-type="submit" catchtap='sureOrderFn'>立即结算</button>
+            <button class='order-foot-gray fl' form-type="submit" wx:if="{{tag==1}}">立即结算</button>
+            <view class='order-foot-gray fl nobuy_zhenzhao' wx:if="{{isbuy_zhezBtn}}"></view>
+        </view>
+        <view style='clear:both;'></view>
+    </view>
+    <!-- 支付弹框组件 -->
+    <pay-popup is-show-pay="{{isShowPay}}" pay-integral="{{payMoney}}" user-integral="{{userIntegral || 0}}" is-use-integral="{{isUseIntegral}}" bindhide="hidePayFn"  bindpaysuc="paySucFn"></pay-popup> 
+    </form>
+</view>

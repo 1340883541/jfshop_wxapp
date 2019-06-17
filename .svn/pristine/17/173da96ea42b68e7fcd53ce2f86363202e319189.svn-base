@@ -1,0 +1,747 @@
+// pages/cart/cart.js
+const Nav = require('../../utils/navigate.js');
+const Ajax = require('../../utils/request.js');
+const app = getApp();
+let requestCount = 0;
+// 滑动确认左滑还是右滑
+let startX = 0, moveX = 0, endX = 0,
+    startY = 0, moveY = 0, endY = 0;
+Page({
+
+    /**
+     * 页面的初始数据
+     */
+    data: {
+        // 是否显示移除按钮
+        isShowDelete: false,
+
+        // 是否加载成功
+        isLoadSuc: false,
+        // 是否左滑
+        isHaveLeft: false,
+        isGetInfo: true,
+
+        // 购物车列表
+        allLists: [],
+        currLists: [],
+        leftLists: [],
+        priceLists: [],
+        allpricelists:[],
+        numberLists: [],
+        totalPrice: 0, //折扣总价
+        alltotalPrice: 0, //原价总价
+        // 失效lists
+        deleteLists: [],
+        saleLists: [],
+        stockLists:[],
+        nostockList:[],
+        // 是否全选
+        isAllSelect: false,
+        // 当前页数
+        page: 1,
+        totalPage: 1,
+
+        // 弹框组件信息
+        isShowToast: false,
+        toastTxt: '',
+        // 是否点击的删除
+        isClickDelete:false,
+        // 支付按钮等遮罩
+        isjies_zhenzhao: false
+    },
+    onPullDownRefresh() {
+        this.showNologinFn();
+    },
+    /**
+     * 生命周期函数--监听页面加载
+     */
+    onLoad: function (options) {
+        this.showNologinFn();
+    },
+
+    /**
+     * 生命周期函数--监听页面显示
+     */
+    onShow: function () {
+        setTimeout(function () {
+            wx.setStorageSync('isRefreshCart', 1);
+        }, 120000);
+        // 未获取授权的情况下，重新获取
+        if (!this.data.isGetInfo) {
+            this.showNologinFn();
+        }
+        let isRefreshCart = wx.getStorageSync('isRefreshCart');
+        let getOpenidErrCart = wx.getStorageSync('getOpenidErrCart');
+        if (isRefreshCart == 1) {
+            this.initPage()
+        }
+
+        // 如果openid获取失败
+        if (getOpenidErrCart) {
+            let _this = this;
+            //再一次请求获取openid
+            wx.login({
+                success: res => {
+                    // 发送 res.code 到后台换取 openId, sessionKey, unionId
+                    if (res.code) {
+                        //发起网络请求
+                        Ajax.ajaxFunc({
+                            url: 'Api/MemberRegister/get_user_openid',
+                            data: {
+                                js_code: res.code
+                            },
+                            success: function (r) {
+                                if (r.code == 1) {
+                                    app.globalData.openId = r.data.openid || wx.getStorageSync('openid');
+                                }
+                                _this.fetchCartData();
+                                _this.cartNumFunc();
+                                wx.removeStorageSync('getOpenidErrCart');
+                            }
+                        })
+                    }
+                }
+            });
+        }
+        wx.removeStorageSync('isRefreshCart');
+    },
+
+    // 购物车数量显示
+    cartNumFunc(){
+        const _this = this;
+        Ajax.ajaxFunc({
+            url: 'api/cart/getCartCount',
+            data: {
+                openid: app.globalData.openId || wx.getStorageSync('openid')
+            },
+            success: function (r) {
+                //console.log(r);
+                if(r.code == 1){
+                    app.globalData.cartNum = r.data.count;
+                    
+                    if (app.globalData.cartNum > 0){
+                        wx.setTabBarBadge({
+                            index: 2,
+                            text: r.data.count
+                        })
+                    }else{
+                        wx.removeTabBarBadge({
+                            index: 2
+                        })
+                    }
+                    
+                }else if(r.code==3){
+                  wx.showToast({
+                    title: r.msg,
+                    icon: 'none'
+                  })
+                }
+            }
+        })
+    },
+
+    // 页面初始化
+    initPage:function(){
+        // 页面更新重新初始化数据
+        this.data.page = 1;
+        // 全选
+        this.setData({
+            isAllSelect: false
+        })
+        this.data.allLists = [];
+        this.data.currLists = [];
+        this.data.leftLists = [];
+        this.data.priceLists = [];
+        this.data.allpricelists = [];
+        this.data.numberLists = [];
+        this.data.totalPrice = 0;
+        this.data.alltotalPrice = 0;
+        // 失效lists
+        this.data.deleteLists = [],
+        this.data.saleLists = [];
+        // 库存为0
+        this.data.stockLists = [];
+        // 后台设置为缺货
+        this.data.nostockList = [];
+        this.showNologinFn();
+    },
+    /**
+     * 页面上拉触底事件的处理函数
+     */
+    onReachBottom: function () {
+        if (++this.data.page <= this.data.totalPage) {
+            this.fetchCartData(true);
+        } else {
+            this.setData({
+                isShowToast: true,
+                toastTxt: '没有更多了'
+            })
+        }
+    },
+    // 选中商品详情
+    skipGoodsDetail: function (e) {
+        let dataset = e.currentTarget.dataset,
+            goodId = dataset.goodid,
+            idx = dataset.idx,
+            ids = dataset.ids,
+            isSale = dataset.sale,
+            isStock = dataset.stock,
+            isStock1 = dataset.nostock;
+        let content = '';
+        console.log(isStock1)
+        if(isSale == 2){
+            content = '该商品已下架，是否需要删除，不需要则跳转到商品详情';
+            this.alertDelete(content, idx, ids, goodId);
+        }
+        if (isStock == 0){
+            content = '该商品库存不足，是否需要删除，不需要则跳转到商品详情';
+            this.alertDelete(content, idx, ids, goodId);            
+        }
+        if (isStock1 == 2) {
+            content = '该商品缺货，是否需要删除，不需要则跳转到商品详情';
+            this.alertDelete(content, idx, ids, goodId);
+        }
+        if (isSale != 2 && isStock != 0 && isStock1 != 2) {
+            Nav.nav('navigateTo', '../goodDetail/goodDetail', { id: goodId });
+        }
+    },
+    alertDelete: function (content, idx, ids, goodId){
+        let _this = this;
+        wx.showModal({
+            title: '提示',
+            content: content,
+            cancelText:'不需要',
+            confirmText:'需要',
+            confirmColor:'#FF7F0E',
+            success:function(e){
+                if(e.confirm){
+                    _this.deleteFn(ids,idx);
+                }else{
+                    Nav.nav('navigateTo', '../goodDetail/goodDetail', { id: goodId });
+                }
+            }
+        })
+    },
+    // 是否显示未获取授权
+    showNologinFn: function () {
+        if (!wx.getStorageSync('headport')) {
+            this.setData({
+                isGetInfo: false
+            })
+        } else {
+            // 授权成功
+            this.setData({
+                isGetInfo: true
+            });
+            this.fetchCartData();
+            this.cartNumFunc();
+        }
+    },
+    // 获取购物车数据
+    fetchCartData: function (isLoadMore = false) {
+        wx.showLoading({
+            title: '正在加载中...',
+        })
+        let _this = this;
+        Ajax.ajaxFunc({
+            url: 'api/cart/index',
+            data: {
+                openid: app.globalData.openId || wx.getStorageSync('openid'),
+                now_page: _this.data.page
+            },
+            success(res) {
+                //console.log(JSON.stringify(res))
+                wx.stopPullDownRefresh();
+                if (res.code == 1) {
+                    wx.hideLoading();
+                    // 数据初始化
+                    let currLists = _this.data.currLists,  // 点击的当前列表
+                        leftLists = _this.data.leftLists,  // 是否左滑列表
+                        priceLists = _this.data.priceLists, // 价格列表
+                        allpricelists = _this.data.allpricelists, //总价格列表
+                        numberLists = _this.data.numberLists,  //数量列表
+                        deleteLists = _this.data.deleteLists,  //判断已失效列表
+                        saleLists = _this.data.saleLists,   // 判断已下架列表
+                        stockLists = _this.data.stockLists,  // 判断库存是否不足
+                        nostockList = _this.data.nostockList;
+                    res.data.list.forEach(val => {
+                        if (currLists.length < res.data.list.length){
+                            currLists.push(false);
+                            leftLists.push(false);
+                            priceLists.push(Number(val.price_dis));
+                            allpricelists.push(Number(val.price_y))
+                            if (Number(val.goods_number) > Number(val.stock)){
+                                numberLists.push(Number(val.stock));
+                            }
+                            else {
+                                numberLists.push(Number(val.goods_number));
+                            }
+                            saleLists.push(val.is_sale);
+                            deleteLists.push(val.is_delete);
+                            stockLists.push(val.stock);
+                            nostockList.push(val.no_stock);
+                        }
+                    });
+                    // 总页数
+                    _this.data.totalPage = res.data.page.totalPages;
+                    _this.setData({
+                        currLists: currLists,
+                        leftLists: leftLists,
+                        priceLists: priceLists,
+                        allpricelists: allpricelists,
+                        numberLists: numberLists,
+                        deleteLists: deleteLists,
+                        saleLists: saleLists,
+                        stockLists: stockLists,
+                        nostockList: nostockList
+                    })
+                    // 是否是加载更多
+                    if (!isLoadMore) {
+                        _this.setData({
+                            isLoadSuc: true,
+                            allLists: res.data.list
+                        });
+                    } else {
+                        let lists = _this.data.allLists.concat(res.data.list);
+                        _this.setData({
+                            allLists: lists
+                        })
+                    }
+                    // 重新计算价格
+                    _this.calcPrice();
+                } else if (res.code == 0) {
+                    _this.ajaxFail(_this.fetchCartData);
+                }else if(res.code == 4){
+                    wx.showToast({
+                        title: res.msg,
+                        icon: 'none'
+                    })
+                    wx.setStorageSync('openid', '');
+                    wx.setStorageSync('isLogin', 0);
+                    wx.clearStorageSync();
+                    app.globalData.isLogin = 0;
+                    wx.navigateTo({
+                        url: '../verifyPhone/verifyPhone'
+                    })
+                }
+            }
+        })
+    },
+    // openid 未读取到，重新加载一次数据
+    ajaxFail: function (fn) {
+        let _this = this,
+            timer;
+        ++requestCount;
+        if (app.globalData.openId || wx.getStorageSync('openid')) {
+            fn && typeof fn === 'function' && fn();
+            requestCount = 0;
+        } else {
+            setTimeout(function () {
+                clearTimeout(timer);
+                if (requestCount <= 5) {
+                    fn && typeof fn === 'function' && fn();
+                }
+                else {
+                    wx.showToast({
+                        title: '请求失败，请切换页面重试一下！',
+                        icon: 'none'
+                    });
+                    wx.setStorageSync('getOpenidErrCart', true)
+                }
+            }, 1000);
+        }
+    },
+    // 单选中
+    selectedFn: function (e) {
+        
+        let idx = e.currentTarget.dataset.idx;
+        this.data.currLists[idx] = !this.data.currLists[idx];
+        let lists = this.data.currLists;
+        this.setData({
+            currLists: lists
+        });
+        this.selectCheckAll();
+        this.calcPrice();
+    },
+    // 单选检测是否全部选中
+    selectCheckAll: function () {
+        let isAll = this.data.currLists.every(val => {
+            return val;
+        });
+        this.setData({
+            isAllSelect: isAll
+        })
+    },
+    // 全选
+    allSelectFn: function () {
+        // 全选
+        if (!this.data.isAllSelect) {
+            let lists = this.data.currLists.map((val, i) => {
+                if (this.data.saleLists[i] == 2 || this.data.deleteLists[i] == 2 || this.data.stockLists[i] == 0 || this.data.nostockList[i] == 2) {
+                    return val = false;
+                } else {
+                    return val = true;
+                }
+            });
+            this.setData({
+                isAllSelect: true,
+                currLists: lists
+            })
+        } else {
+            // 全不选
+            let lists = this.data.currLists.map(val => {
+                return val = false;
+            });
+            this.setData({
+                isAllSelect: false,
+                currLists: lists
+            })
+        }
+        this.calcPrice();
+    },
+    submit: function (e) {
+        // console.log(e.detail.formId)
+        // console.log('模板发送');
+        Ajax.ajaxFunc({
+            url: 'api/index/getFormId',
+            data: {
+                openid: app.globalData.openId || wx.getStorageSync('openid'),
+                formId: e.detail.formId
+            },
+            success: function (r) {
+                // console.log(JSON.stringify(r))
+            }
+        })
+    },
+    // 跳转到结算页面
+    skipJieFn: function () {
+        this.setData({
+            isjies_zhenzhao: true
+        })
+        let _this = this;
+        let cartId = '', numCount = '';
+        this.data.currLists.forEach((value, i) => {
+            console.log(this.data.allLists[i])
+            if (value) {
+                cartId += this.data.allLists[i].id + ',';
+                numCount += this.data.numberLists[i] + ',';
+            }
+        });
+        let isSelect = this.data.currLists.some(val => {
+            return val;
+        });
+        if (isSelect) {
+            cartId = cartId.substring(0, cartId.length - 1);
+            numCount = numCount.substring(0, numCount.length - 1);
+            Ajax.ajaxFunc({
+                url:'api/order/presentPage',
+                data:{
+                    _from: '2', 
+                    cart_ids: cartId, 
+                    number: numCount,
+                    openid: app.globalData.openId || wx.getStorageSync('openid')
+                },
+                success:function(res){
+                    if (res.code == 1) {
+                        Nav.nav('navigateTo', '../fillOrder/fillOrder', { _from: '2', cart_ids: cartId, number: numCount })
+                    }else{
+                        wx.showToast({
+                            title: res.msg,
+                            icon: 'none'
+                        });
+                        if (res.code == 4) {
+                            wx.setStorageSync('openid', '');
+                            wx.setStorageSync('isLogin', 0);
+                            wx.clearStorageSync();
+                            app.globalData.isLogin = 0;
+                            wx.navigateTo({
+                                url: '../verifyPhone/verifyPhone'
+                            })
+                        }
+                    }
+                    setTimeout(function () {
+                        _this.setData({
+                            isjies_zhenzhao: false
+                        })
+                    }, 1000)
+                }
+            })
+        } else {
+            _this.setData({
+                isjies_zhenzhao: false
+            })
+            wx.showToast({
+                title: '请选择要结算的商品',
+                icon: 'none'
+            });
+        }
+        setTimeout(function () {
+            _this.setData({
+                isjies_zhenzhao: false
+            })
+        }, 2000)
+    },
+    // 左滑删除
+    touchstartFn: function (e) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        let isHaveLeft = this.data.leftLists.some(index => {
+            return index;
+        });
+        this.setData({
+            isHaveLeft: isHaveLeft
+        })
+    },
+    touchendFn: function (e) {
+        moveX = e.changedTouches[0].clientX - startX;
+        moveY = e.changedTouches[0].clientY - startY;
+        let idx = e.currentTarget.dataset.idx;
+        // 是否存在已经显示左滑的
+        if (!this.data.isHaveLeft) {
+            // 判断是左右滑动，还是上下滑动
+            // 右滑
+            if (e.changedTouches[0].clientX - startX >= 30) {
+                this.data.leftLists[idx] = false;
+                this.setData({
+                    leftLists: this.data.leftLists
+                })
+            } else if (e.changedTouches[0].clientX - startX <= -30) {
+                this.data.leftLists[idx] = true;
+                this.setData({
+                    leftLists: this.data.leftLists
+                })
+            }
+        } else {
+            // 已经存在左滑的，将全部变回来
+            if (!this.data.isClickDelete) {
+                console.log(e)
+                this.leftCancel();
+            }
+        }
+    },
+    // 点击一下，撤销左滑
+    leftCancel: function () {
+        this.data.leftLists = this.data.leftLists.map(() => {
+            return false;
+        })
+        this.setData({
+            leftLists: this.data.leftLists
+        })
+    },
+    // 点击删除，不做滑动
+    deleteStart:function(){
+        this.data.isClickDelete = true;
+    },
+    // 删除购物车商品  单个删除
+    deleteCartFn: function (e) {
+        let _this = this,
+            ids = e.currentTarget.dataset.ids,
+            idx = e.currentTarget.dataset.idx;
+        wx.showModal({
+            title: '提示',
+            content: '确认要删除此商品吗？',
+            confirmColor: "#FF7F0E",
+            success: function (e) {
+                // console.log(e);
+
+                _this.data.isClickDelete = false;
+                // 点击确认删除
+                if (e.confirm) {
+                    _this.deleteFn(ids,idx);
+                } else {
+
+                }
+            }
+        })
+    },
+    // 删除购物车  多个删除
+    deleteCartMore:function(e){
+        let _this = this,deleteArr = [];
+        this.data.currLists.forEach((val,index) => {
+            if(val){
+                deleteArr.push(this.data.allLists[index].id);
+            }
+        });
+        let deleteStr = deleteArr.join(',');
+        wx.showModal({
+            title: '提示',
+            content: '确认要批量删除购物车商品吗？',
+            confirmColor: "#FF7F0E",
+            success: function (e) {
+                _this.data.isClickDelete = false;
+                // 点击确认删除
+                if (e.confirm) {
+                    _this.deleteFn(deleteStr,0,'batchremove');
+                } else {
+
+                }
+            }
+        })
+    },
+    // 删除方法  单个和多个
+    deleteFn:function(ids,idx,origin = 'remove'){
+        let _this = this,
+            nCartNum = 0;
+        // console.log(ids)
+        Ajax.ajaxFunc({
+            url: 'api/cart/del',
+            data: {
+                openid: app.globalData.openId || wx.getStorageSync('openid'),
+                ids: ids
+            },
+            success: function (d) {
+                if (d.code == 1) {
+                    wx.showToast({
+                        title: '删除成功'
+                    });
+                    if (ids.indexOf(',') > -1 || origin == 'batchremove'){
+                        _this.showNologinFn();
+                    }else{
+                        _this.data.allLists.splice(idx, 1);
+                        _this.data.currLists.splice(idx, 1);
+                        _this.data.priceLists.splice(idx, 1);
+                        _this.data.allpricelists.splice(idx, 1);
+                        _this.data.leftLists.splice(idx, 1);
+                        _this.data.numberLists.splice(idx, 1);
+                        _this.data.saleLists.splice(idx, 1);
+                        _this.data.deleteLists.splice(idx, 1);
+                        _this.setData({
+                            allLists: _this.data.allLists,
+                            currLists: _this.data.currLists,
+                            priceLists: _this.data.priceLists,
+                            allpricelists: _this.data.allpricelists,
+                            leftLists: _this.data.leftLists,
+                            numberLists: _this.data.numberLists,
+                            saleLists: _this.data.saleLists,
+                            deleteLists: _this.data.deleteLists,
+                            stockLists: _this.data.stockLists,
+                            nostockList: _this.data.nostockList
+                        });
+
+                        nCartNum = Number(app.globalData.cartNum) - 1;
+                        app.globalData.cartNum = nCartNum.toString();
+
+                        if (app.globalData.cartNum > 0) {
+                            wx.setTabBarBadge({
+                                index: 2,
+                                text: app.globalData.cartNum
+                            })
+                        } else {
+                            wx.removeTabBarBadge({
+                                index: 2
+                            })
+                        }
+
+                    _this.calcPrice();
+                    }
+                } else {
+                    wx.showToast({
+                        title: d.msg,
+                        icon: 'none'
+                    })
+                }
+            }
+        });
+    },
+    // 获取用户信息
+    getUserInfo: function (e) {
+        var _this = this;
+        if (e.detail.errMsg == 'getUserInfo:ok') {
+            wx.setStorageSync('headport', e.detail.userInfo.avatarUrl)
+            Ajax.ajaxFunc({
+                url: 'Api/MemberRegister/register',
+                data: {
+                    openid: app.globalData.openId || wx.getStorageSync('openid'),
+                    head: e.detail.userInfo.avatarUrl,
+                    nick_name: e.detail.userInfo.nickName
+                },
+                success(res) {
+                    console.log(res)
+                    app.globalData.userInfo = e.detail.userInfo;
+                    _this.showNologinFn();
+                }
+            })
+        } else {
+            // 点击的拒绝
+            // 不做处理
+        }
+    },
+    // 数量减
+    numReduce: function (e) {
+        let idx = e.currentTarget.dataset.idx,
+            price = this.data.numberLists[idx];
+        price = price <= 1 ? 1 : --price;
+        this.data.numberLists.splice(idx, 1, price);
+        this.setData({
+            numberLists: this.data.numberLists
+        });
+        if (this.data.currLists[idx]) {
+            this.calcPrice();
+        }
+    },
+    oNumberFunc:function(e){
+        let idx = e.currentTarget.dataset.idx;
+        if (e.detail.value > 99 || e.detail.value > this.data.allLists[idx].stock){
+            wx.showToast({
+                title: '数量超出范围',
+                icon: 'none',
+                duration: 2000
+            });
+        }else{
+            let price = e.detail.value != '' ? e.detail.value : 1;
+            this.data.numberLists.splice(idx, 1, price);
+            this.setData({
+                numberLists: this.data.numberLists
+            });
+            console.log(idx, price)
+            if (this.data.currLists[idx]) {
+                this.calcPrice();
+            }
+        }
+    },
+    // 数量加
+    numAdd: function (e) {
+        let idx = e.currentTarget.dataset.idx,
+            price = this.data.numberLists[idx];
+        price = price >= this.data.allLists[idx].stock ? this.data.allLists[idx].stock : ++price;
+        this.data.numberLists.splice(idx, 1, price);
+        this.setData({
+            numberLists: this.data.numberLists
+        });
+        if (this.data.currLists[idx]) {
+            this.calcPrice();
+        }
+    },
+    // 计算总价
+    calcPrice: function () {
+        let sum = 0;
+        let sumall = 0;
+        // console.log(this.data.currLists)
+        // console.log(this.data.priceLists)
+        // console.log(this.data.numberLists)
+        if(this.data.currLists.length == this.data.allLists.length){
+            let showDelete = this.data.currLists.some((val)=>{
+                return val;
+            })
+            this.setData({
+                isShowDelete: showDelete
+            });
+            this.data.currLists.forEach((val, idx) => {
+                if (val) {
+                    sum += this.data.priceLists[idx] * this.data.numberLists[idx];
+                    sumall += this.data.allpricelists[idx] * this.data.numberLists[idx];
+                }
+            });
+            this.setData({
+                totalPrice: sum.toFixed(0),
+                alltotalPrice: sumall.toFixed(0)
+            });
+        }else{
+            this.initPage();
+        }
+    },
+    // 空白页，跳转到首页
+    skipIndex: function () {
+        Nav.nav('switchTab', '../index/index')
+    }
+})

@@ -1,0 +1,107 @@
+ <!--pages/goodDetail/goodDetail.wxml-->
+<import src="../../wxParse/wxParse.wxml"/>
+<view class='container'>
+    <form bindsubmit="submit" report-submit='true'>
+    <view class='good-swiper w100'>
+        <swiper bindchange='changeIndex' indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" style="height:{{picHeight}}" class="{{imgUrls.length <= 0 ? 'placeholder-icon' : ''}}">
+            <block wx:for="{{imgUrls}}" wx:key="{{key}}">
+                <swiper-item>
+                    <image src="{{item}}" class="placeholder-icon" catchtap='enlargePic' data-src="{{item}}" style="width:{{windowWidth}};height:{{picHeight}}" mode='aspectFill' lazy-load/>
+                </swiper-item>
+            </block>
+        </swiper>
+    </view>
+    <!--商品描述和价格  -->
+    <view class='good-info'>
+        <view class='good-title'>{{ goodsName }}</view>
+        <view class='good-msgtitle'>{{ goodsmsgtitle }}</view>        
+        <view class='good-price'>
+            <text class='good-curprice' wx:if="{{priceDis!=0}}">{{ noStock==1 ? curprice : priceDis }}积分</text>
+            <text class='good-curprice' wx:if="{{priceDis==0}}">免费</text>
+            <text class='jifen_y' wx:if="{{ priceY != curprice}}">{{ priceY }} 积分</text>
+            <text class='que-detail-btn fr' wx:if="{{noStock == 2}}">缺货</text>
+        </view>
+    </view>
+    <view class='split-chunk'></view>
+    <!--规格  -->
+    <view class='scale'>
+        <view class='selected-scale flex-wrap flex-align flex-side' bindtap='scaleDetailSh'>
+            <view wx:if="{{noStock==1}}">
+                <text class='has-scale-text'>已选：{{ activeSku }}数量：{{ oNumber }}</text>
+            </view>
+            <view wx:else>
+                <text class='has-scale-text'>商品缺货</text>
+            </view>
+            <image class='scale-dot' src='../../images/dot.png' wx:if='{{ scaleDetail }}'></image>
+            <image class='scale-dot' src='../../images/dot2.png' wx:else></image>
+        </view>
+        <view class='scale-detail-box' hidden='{{ scaleDetail }}'>
+            <view class='scale-list' wx:for='{{ sku }}' wx:key='{{ item.key }}'>
+                <view class='scale-list-txt'>{{ item.val }}</view>
+                <view class='scale-list-box'>
+                    <view class='scale-list-btn {{noStock==2 ? "cover-scale-list-btn" : "" }} {{ redSkuArr[index][attrItem.key] ? "cover-scale-list-btn" : "" }} {{ noStock==1 && attrItem.is_default == 1 ? "active-scale-list-btn" : "" }}' wx:for='{{ item.attr }}' wx:for-item='attrItem' wx:key='{{ attrItem.key }}' wx:for-index='attrIndex'>
+                        <view bindtap='switchGoodsAni' data-index='{{ index }}' data-sIndex='{{ attrIndex }}'>{{ attrItem.val }}</view>
+                    </view>
+                </view>
+                
+            </view>
+
+            <view class='scale-list'  wx:if="{{ noStock == 1 }}">
+                <view class='scale-list-txt'>数量</view>
+                <view class='scale-list-num'>
+                    <view class='list-num-click {{ oNumber <= 1 ? "list-num-unclick" : "" }}' bindtap='numberJian'>-</view>
+                    <view class='list-num-num'>{{ oNumber }}</view>
+                    <view class='list-num-click {{ oNumber >= oSurplus ? "list-num-unclick" : "" }}' bindtap='numberJia'>+</view>
+                </view>
+                <view class='scale-list-surplus' hidden='{{ oSurplus > 9 }}'>剩余：<text>{{ oSurplus }}</text></view>
+            </view>
+        </view>
+    </view>
+    <view class='split-chunk'></view>
+    <!--商品详情  -->
+    <view class='good-detail-main'>
+        <view class='good-detail-top'>
+            <text class='good-detail-text'>商品详情</text>
+        </view>
+        <template is="wxParse" data="{{wxParseData: about.nodes}}" /> 
+        <!-- <view class='good-content'>
+            <image src='../../images/comment_pic.png' style='width:{{windowWidth}}' mode='widthFix'></image>
+        </view> -->
+    </view>
+    <!-- 底部按钮  -->
+    <view class='btn-bottom'>
+        <view class='btns-bot flex-wrap flex-align'>
+          <view class='col-btn'>
+         <view class="col-icon-t">
+               <contact-button size="22" class='pos'></contact-button>
+               <image class="icon_kf" src="/images/kefu.png"></image>    
+           </view>
+          <view class="col-btn-text">客服</view>
+           </view>
+            <view class='col-btn' bindtap='gotocart'>
+                <view class='col-icon-t'>
+                    <image class='col-btn-icon  col-btn-icon2' src='../../images/cart_icon.png'></image>
+                    <text class='cart-count' hidden='{{ cartNum == 0 }}'>{{ cartNum }}</text>
+                    <view class='add-goods-one {{ shoppingCart ? "add-goods-one-move" : "" }}' hidden='{{ cartNum == 0 }}'>+1</view>
+                </view>
+                <view class='col-btn-text'>购物车</view>
+            </view>
+            <view class='click-btn-box'>
+                <view class='click-btn-cover' wx:if='{{ noStock == 2 || sale == 2 || allGray == 2 }}'></view>
+                <!-- <button class='click-btn add-cart' form-type="submitcart" bindtap='addCart'>加入购物车</button >
+                <button  class='click-btn now-buy' form-type="submitbuy" bindtap='gotoNowBuy'>立即购买</button > -->
+                <button class='click-btn add-cart' form-type="submit" bindtap='addCart'wx:if="{{tag==0}}">加入购物车</button>
+                <button class='click-btn add-cart-tag' form-type="submit" wx:if="{{tag!=0}}">加入购物车</button>
+
+                <button  class='click-btn now-buy' form-type="submit" bindtap='gotoNowBuy'>立即购买</button >
+                <button  class='click-btn now-buy nowbuy-zhezhao' wx:if="{{isbuy_zhenzhabtn}}"></button >
+            </view>
+        </view>
+    </view>
+
+    <!-- 商品失效时 -->
+    <view class='goods-lost-cover' wx:if='{{ sale == 2 }}'>
+        <view class='goods-lost-txt'>商品已下架~</view>
+    </view>
+    </form>
+</view>

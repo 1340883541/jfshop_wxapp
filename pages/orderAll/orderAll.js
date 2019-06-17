@@ -1,0 +1,445 @@
+// pages/orderAll/orderAll.js
+import ajax from '../../utils/request.js';
+const Nav = require('../../utils/navigate.js');
+const app = getApp();
+
+Page({
+
+    /**
+     * 页面的初始数据
+     */
+    data: {
+        state: 0,
+        items: [],
+        page: 1,
+        totalPage: 1,
+
+        // 支付弹框
+        isShowPay:false,
+        payMoney:0,  // 支付价格
+        userIntegral: '0',//总积分
+        isUseIntegral:false,//是否能够用积分
+        currOrderId:'',  // 当前的orderID
+        isWuliu:false,
+        wuliuList:[],
+        //立即结算按钮遮罩
+        isbuy_zhezBtn: false,
+        isbuy_order_zhezBtn: false,
+
+        // 订单状态
+        showOrderStatus:false,
+        isRadioDis:false,
+        isDis1: '',
+        isDis2: '',
+        orderStarusId:'',
+        //0为不选，1为是，2为否 
+        completeChecked: 0,
+        verifyChecked: 0,
+    },
+
+    /**
+     * 生命周期函数--监听页面加载
+     */
+    onLoad: function (options) {
+        this.setData({
+            state: options.state
+        });
+        switch(options.state){
+            case '1':
+                wx.setNavigationBarTitle({
+                    title: '已取消',
+                });
+                break;
+            case '2':
+                wx.setNavigationBarTitle({
+                    title: '待支付',
+                });
+                break;
+            case '3':
+                wx.setNavigationBarTitle({
+                    title: '已完成',
+                });
+                break;
+            default:
+                wx.setNavigationBarTitle({
+                    title: '全部订单',
+                });
+                break;
+        }
+    },
+
+    /**
+     * 生命周期函数--监听页面显示
+     */
+    onShow: function () {
+        this.setData({
+            page: 1
+        })
+
+        this.renderFunc();
+    },
+
+    /**
+     * 页面上拉触底事件的处理函数
+     */
+    onReachBottom: function () {
+        if(this.data.page < this.data.totalPage){
+            let page = this.data.page + 1;
+            this.setData({
+                page: page
+            })
+            this.renderFunc();
+        }
+    },
+
+
+    // 渲染列表
+    renderFunc(){
+        const _this = this;
+
+        wx.showLoading({
+            title: '加载中',
+            mask: true
+        })
+        ajax.ajaxFunc({
+            url: 'api/order/index',
+            data: {
+                status: this.data.state,
+                now_page: _this.data.page,
+                openid: app.globalData.openId || wx.getStorageSync('openid')
+            },
+            success: function (r) {
+                // console.log(r);
+                if (r.code == 1){
+                    _this.setData({
+                        totalPage: r.data.page.totalPages || 1
+                    })
+
+                    if(_this.data.page == 1){
+                        _this.setData({
+                            items: r.data.list
+                        })
+                    }else{
+                        _this.setData({
+                            items: _this.data.items.concat(r.data.list)
+                        })
+                    }
+                }
+                wx.hideLoading();
+            }
+        })
+    },
+    //物流查询
+    lookWuliu(e){
+        this.setData({
+            isWuliu: true
+        })
+        const _this = this;
+        let id = e.currentTarget.dataset.id;
+
+        wx.showLoading({
+            title: '加载中',
+            mask: true
+        })
+        ajax.ajaxFunc({
+            url: 'api/order/getExpress',
+            data: {
+                id: id,
+                openid: app.globalData.openId || wx.getStorageSync('openid')
+            },
+            success: function (r) {
+                // console.log(r);
+                if (r.code == 1) {
+                    _this.setData({
+                        wuliuList: r.data
+                    })
+                }
+                wx.hideLoading();
+            }
+        }) 
+    },
+    //关闭物流弹框
+    closeWuliu(){
+        this.setData({
+            isWuliu: false
+        })
+    },
+
+    // 再来一单
+    orderMore(e){
+        this.setData({
+            isbuy_order_zhezBtn: true
+        })
+        let _this = this;
+        let id = e.currentTarget.dataset.id;
+        // console.log(id);
+        ajax.ajaxFunc({
+            url: 'api/order/reCreateOrder',
+            data: {
+                id: id,
+                openid: app.globalData.openId || wx.getStorageSync('openid')
+            },
+            success: function (r) {
+                if (r.code == 1) {
+                    wx.showToast({
+                        title: r.msg,
+                        icon: 'none',
+                        duration: 1500
+                    });
+
+                    wx.setStorageSync('isRefreshCart', 1);
+
+                    setTimeout(function(){
+                        wx.switchTab({
+                            url: '/pages/cart/cart'
+                        })
+                    }, 1000);
+                }else if(r.code == 111){
+                    wx.setStorageSync('isRefreshCart', 1);
+
+                    wx.showModal({
+                        title: '提示',
+                        content: r.msg,
+                        confirmColor: "#a88c5d",
+                        showCancel: false,
+                        success: function (res) {
+                            if (res.confirm) {
+                                // console.log('用户点击确认')
+                                wx.switchTab({
+                                    url: '/pages/cart/cart'
+                                })
+                            }
+                        }
+                    })
+                }else if(r.code == 0){
+                    wx.setStorageSync('isRefreshCart', 1);
+                    wx.showToast({
+                        title: '商品库存不足',
+                        icon: 'none',
+                        duration: 1500
+                    });
+                }
+                setTimeout(function () {
+                    _this.setData({
+                        isbuy_order_zhezBtn: false
+                    })
+                }, 1000)
+            }
+        })
+        setTimeout(function () {
+            _this.setData({
+                isbuy_order_zhezBtn: false
+            })
+        }, 2000)
+    },
+
+    // 取消 & 删除
+    celNdel(e){
+        const _this = this;
+        let id = e.currentTarget.dataset.id;
+        let oType = e.currentTarget.dataset.type;
+        let tleTxt = '';
+
+        if(oType == 1){
+            tleTxt = '确定取消该订单吗？';
+        }else{
+            tleTxt = '确定删除该订单吗？';
+        }
+        
+        wx.showModal({
+            title: '提示',
+            content: tleTxt,
+            confirmColor: "#a88c5d",
+            success: function (res) {
+                if (res.confirm) {
+                    // console.log('用户点击确认')
+                    ajax.ajaxFunc({
+                        url: 'api/order/del',
+                        data: {
+                            id: id,
+                            type: oType,
+                            openid: app.globalData.openId || wx.getStorageSync('openid')
+                        },
+                        success: function (r) {
+                            console.log(r);
+                            if (r.code == 1) {
+                                _this.setData({
+                                    page: 1
+                                })
+
+                                wx.setStorageSync('isRefreshPerson', 1);
+                                _this.renderFunc();
+                            }else{
+                                wx.showToast({
+                                    title: r.msg,
+                                    icon:'none'
+                                })
+                            }
+                        }
+                    })
+
+                } else if (res.cancel) {
+                    // console.log('用户点击取消')
+                }
+            }
+        })
+    },
+    
+    // 订单详情
+    skipOrderDetail(e){
+        let id = e.currentTarget.dataset.id;
+        Nav.nav('navigateTo','../orderDetail/orderDetail', {id: id});
+    },
+
+    // 去支付
+    gotoPay:function(e){
+        this.setData({
+            isbuy_zhezBtn: true
+        })
+        let _this = this;
+        this.data.currOrderId = e.currentTarget.dataset.id;
+        ajax.ajaxFunc({
+            url:'api/order/toPay',
+            data:{
+                id: e.currentTarget.dataset.id,
+                openid: app.globalData.openId || wx.getStorageSync('openid')
+            },
+            success:function(res){
+                if (res.code == 1) {
+                    // _this.setData({
+                    //     isShowPay: true
+                    // });
+                    _this.setData({
+                        payMoney: res.data.money,
+                        userIntegral: res.data.integral,
+                        isUseIntegral: Number(res.data.integral) >= Number(res.data.money) ? true : false
+                    });
+                    Nav.nav('navigateTo', '../orderDetail/orderDetail', { id: _this.data.currOrderId });
+                }else{
+                    wx.showToast({
+                        title: res.msg,
+                        icon:'none'
+                    })
+                }
+                setTimeout(function () {
+                    _this.setData({
+                        isbuy_zhezBtn: false
+                    });
+                }, 1000)
+            }
+        })
+        setTimeout(function () {
+            _this.setData({
+                isbuy_zhezBtn: false
+            });
+        }, 2000)
+    },
+    // 支付成功
+    paySucFn:function (e) {
+        let _this = this;
+        ajax.ajaxFunc({
+            url: 'api/order/integralPay',
+            data: {
+                id: _this.data.currOrderId,
+                money: _this.data.payMoney,
+                openid: app.globalData.openId || wx.getStorageSync('openid')
+            },
+            success: function (res) {
+                if (res.code == 1) {
+                    // wx.showToast({
+                    //     title: '支付成功'
+                    // });
+                    Nav.nav('navigateTo', '../paySuc/paySuc', { money: _this.data.payMoney, origin: 'order' })
+                } else {
+                    wx.showToast({
+                        title: res.msg,
+                        icon: 'none'
+                    })
+                }
+                _this.setData({
+                    isShowPay: false
+                });
+            }
+        })
+    },
+    // 隐藏支付弹框
+    hidePayFn: function () {
+        this.setData({
+            isShowPay: false
+        });
+    },
+    
+
+    //订单状态
+    // 打开订单状态弹框
+    lookOrderStatus(e){
+        this.setData({
+            completeChecked: e.currentTarget.dataset.complete,
+            verifyChecked: e.currentTarget.dataset.verify,
+            orderStarusId: e.currentTarget.dataset.id,
+            showOrderStatus: true
+        })
+        // console.log(this.data.orderStarusId)
+        // console.log(this.data.verifyChecked)
+        // console.log(this.data.completeChecked)
+    },
+    // 关闭订单状态弹框
+    closeOrderStatus(){
+        this.setData({
+            showOrderStatus: false
+        })
+    },
+    // 订单发生改变
+    radioChange(e) {
+        // console.log('radio发生change事件，携带value值为：', e.detail.value)
+    },
+    // 点击是后，禁止点击否
+    radioDis1Fn(e){
+       this.setData({
+           verifyChecked: 1,
+       }) 
+    },
+    radioDis2Fn(){
+        this.setData({
+            completeChecked: 1,
+        }) 
+    },
+    // 保存订单状态
+    orderStatusSubmit(e){
+        // console.log(e)
+        // console.log(e.detail.value.isVerify + 'isVerify')
+        // console.log(e.detail.value.isComplete +'isComplete')
+        this.setData({
+            completeChecked: e.detail.value.isComplete,
+            verifyChecked: e.detail.value.isVerify
+        })
+        let _this = this;
+        ajax.ajaxFunc({
+            url: 'api/order/saveOrderSpeed',
+            data: {
+                id: _this.data.orderStarusId,
+                openid: app.globalData.openId || wx.getStorageSync('openid'),
+                is_verify: _this.data.verifyChecked,
+                is_complete: _this.data.completeChecked
+            },
+            success: function (res) {
+                if (res.code == 1) {
+                    wx.showToast({
+                        title: '保存成功'
+                    });
+                    _this.renderFunc();
+                } else {
+                    wx.showToast({
+                        title: res.msg,
+                        icon: 'none'
+                    })
+                }
+                _this.setData({
+                    showOrderStatus: false
+                });
+            }
+        })
+
+    },
+
+})

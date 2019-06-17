@@ -1,0 +1,9 @@
+{
+    "navigationBarTitleText": "金鼎管家",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTextStyle": "black",
+    "usingComponents": {
+         "search": "/components/Search/search"
+    },
+    "enablePullDownRefresh":true
+}

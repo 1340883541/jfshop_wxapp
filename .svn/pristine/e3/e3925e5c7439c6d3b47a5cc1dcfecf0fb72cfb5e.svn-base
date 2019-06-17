@@ -1,0 +1,10 @@
+{
+    "navigationBarTitleText": "金鼎管家中心",
+    "navigationBarBackgroundColor": "#000",
+    "navigationBarTextStyle": "white",
+    "navigationStyle": "custom",
+    "usingComponents": {
+         "search": "/components/Search/search"
+    },
+    "enablePullDownRefresh":true
+}
